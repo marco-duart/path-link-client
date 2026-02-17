@@ -271,7 +271,7 @@ export function LinksPage() {
         header: "Nível Requerido",
         size: 160,
         cell: (info) => {
-          const level = info.getValue();
+          const level = info.getValue() ?? 0;
           const levelNames: Record<number, string> = {
             10: "Auxiliar",
             20: "Técnico",
