@@ -1,170 +1,181 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { styled } from '../../assets/styles/themes/stitches.config';
-import { Button, Card } from '../common';
-import apiClient from '../../services/api/client';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { styled } from "../../assets/styles/themes/stitches.config";
+import { Button, Card } from "../common";
+import apiClient from "../../services/api/client";
 
 const createProcessSchema = z.object({
-  name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres').max(255, 'Nome não pode exceder 255 caracteres'),
+  name: z
+    .string()
+    .min(3, "Nome deve ter no mínimo 3 caracteres")
+    .max(255, "Nome não pode exceder 255 caracteres"),
   description: z.string().optional(),
-  category: z.string().min(1, 'Categoria é obrigatória').max(100, 'Categoria não pode exceder 100 caracteres'),
-  requiredLevel: z.number().min(10, 'Nível mínimo deve ser 10').max(99, 'Nível máximo deve ser 99'),
+  category: z
+    .string()
+    .min(1, "Categoria é obrigatória")
+    .max(100, "Categoria não pode exceder 100 caracteres"),
+  requiredLevel: z
+    .number()
+    .min(10, "Nível mínimo deve ser 10")
+    .max(99, "Nível máximo deve ser 99"),
   is_active: z.boolean().default(true),
 });
 
 type CreateProcessFormData = z.infer<typeof createProcessSchema>;
 
-const FormContainer = styled('form', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$lg',
+const FormContainer = styled("form", {
+  display: "flex",
+  flexDirection: "column",
+  gap: "$lg",
 });
 
-const FormGroup = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$sm',
+const FormGroup = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  gap: "$sm",
 });
 
-const Label = styled('label', {
-  fontSize: '$sm',
-  fontWeight: '$semibold',
-  color: '$textPrimary',
+const Label = styled("label", {
+  fontSize: "$sm",
+  fontWeight: "$semibold",
+  color: "$textPrimary",
 });
 
-const Input = styled('input', {
-  width: '100%',
-  paddingLeft: '$md',
-  paddingRight: '$md',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  backgroundColor: '$bgTertiary',
-  border: '1px solid $borderSecondary',
-  borderRadius: '$md',
-  color: '$textPrimary',
-  fontSize: '$sm',
-  transition: 'all $normal',
+const Input = styled("input", {
+  width: "100%",
+  paddingLeft: "$md",
+  paddingRight: "$md",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  backgroundColor: "$bgTertiary",
+  border: "1px solid $borderSecondary",
+  borderRadius: "$md",
+  color: "$textPrimary",
+  fontSize: "$sm",
+  transition: "all $normal",
 
-  '&:focus': {
-    outline: 'none',
-    borderColor: '$primaryColor',
-    boxShadow: '0 0 0 3px rgba(14, 165, 233, 0.15)',
+  "&:focus": {
+    outline: "none",
+    borderColor: "$primaryColor",
+    boxShadow: "0 0 0 3px rgba(14, 165, 233, 0.15)",
   },
 
-  '&::placeholder': {
-    color: '$textMuted',
-  },
-});
-
-const TextArea = styled('textarea', {
-  width: '100%',
-  paddingLeft: '$md',
-  paddingRight: '$md',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  backgroundColor: '$bgTertiary',
-  border: '1px solid $borderSecondary',
-  borderRadius: '$md',
-  color: '$textPrimary',
-  fontSize: '$sm',
-  fontFamily: 'inherit',
-  minHeight: '120px',
-  resize: 'vertical',
-  transition: 'all $normal',
-
-  '&:focus': {
-    outline: 'none',
-    borderColor: '$primaryColor',
-    boxShadow: '0 0 0 3px rgba(14, 165, 233, 0.15)',
-  },
-
-  '&::placeholder': {
-    color: '$textMuted',
+  "&::placeholder": {
+    color: "$textMuted",
   },
 });
 
-const Select = styled('select', {
-  width: '100%',
-  paddingLeft: '$md',
-  paddingRight: '$md',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  backgroundColor: '$bgTertiary',
-  border: '1px solid $borderSecondary',
-  borderRadius: '$md',
-  color: '$textPrimary',
-  fontSize: '$sm',
-  transition: 'all $normal',
-  cursor: 'pointer',
+const TextArea = styled("textarea", {
+  width: "100%",
+  paddingLeft: "$md",
+  paddingRight: "$md",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  backgroundColor: "$bgTertiary",
+  border: "1px solid $borderSecondary",
+  borderRadius: "$md",
+  color: "$textPrimary",
+  fontSize: "$sm",
+  fontFamily: "inherit",
+  minHeight: "120px",
+  resize: "vertical",
+  transition: "all $normal",
 
-  '&:focus': {
-    outline: 'none',
-    borderColor: '$primaryColor',
-    boxShadow: '0 0 0 3px rgba(14, 165, 233, 0.15)',
+  "&:focus": {
+    outline: "none",
+    borderColor: "$primaryColor",
+    boxShadow: "0 0 0 3px rgba(14, 165, 233, 0.15)",
   },
 
-  '& option': {
-    backgroundColor: '$bgSecondary',
-    color: '$textPrimary',
+  "&::placeholder": {
+    color: "$textMuted",
   },
 });
 
-const CheckboxContainer = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$sm',
+const Select = styled("select", {
+  width: "100%",
+  paddingLeft: "$md",
+  paddingRight: "$md",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  backgroundColor: "$bgTertiary",
+  border: "1px solid $borderSecondary",
+  borderRadius: "$md",
+  color: "$textPrimary",
+  fontSize: "$sm",
+  transition: "all $normal",
+  cursor: "pointer",
+
+  "&:focus": {
+    outline: "none",
+    borderColor: "$primaryColor",
+    boxShadow: "0 0 0 3px rgba(14, 165, 233, 0.15)",
+  },
+
+  "& option": {
+    backgroundColor: "$bgSecondary",
+    color: "$textPrimary",
+  },
 });
 
-const CheckboxInput = styled('input', {
-  width: '20px',
-  height: '20px',
-  cursor: 'pointer',
+const CheckboxContainer = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "$sm",
 });
 
-const ErrorMessage = styled('span', {
-  fontSize: '$xs',
-  color: '$errorColor',
-  fontWeight: '$medium',
+const CheckboxInput = styled("input", {
+  width: "20px",
+  height: "20px",
+  cursor: "pointer",
 });
 
-const ButtonGroup = styled('div', {
-  display: 'flex',
-  gap: '$md',
-  marginTop: '$lg',
-  justifyContent: 'flex-end',
+const ErrorMessage = styled("span", {
+  fontSize: "$xs",
+  color: "$errorColor",
+  fontWeight: "$medium",
+});
 
-  '@xs': {
-    flexDirection: 'column-reverse',
+const ButtonGroup = styled("div", {
+  display: "flex",
+  gap: "$md",
+  marginTop: "$lg",
+  justifyContent: "flex-end",
+
+  "@xs": {
+    flexDirection: "column-reverse",
   },
 });
 
 const CATEGORIES = [
-  'Deploy',
-  'Atendimento',
-  'Sankhya',
-  'Jira',
-  'Documentação',
-  'Outra',
+  "Deploy",
+  "Atendimento",
+  "Sankhya",
+  "Jira",
+  "Documentação",
+  "Outra",
 ];
 
 const ROLE_LEVELS = [
-  { value: 10, label: 'Auxiliar' },
-  { value: 20, label: 'Assistente' },
-  { value: 30, label: 'Analista' },
-  { value: 40, label: 'Coordenador' },
-  { value: 50, label: 'Gerente' },
-  { value: 99, label: 'Admin' },
+  { value: 10, label: "Auxiliar" },
+  { value: 20, label: "Assistente" },
+  { value: 30, label: "Analista" },
+  { value: 40, label: "Coordenador" },
+  { value: 50, label: "Gerente" },
+  { value: 99, label: "Admin" },
 ];
 
 interface CreateProcessFormProps {
   onSuccess?: (processId: string) => void;
 }
 
-export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess }) => {
+export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({
+  onSuccess,
+}) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -183,17 +194,17 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
     try {
       setIsSubmitting(true);
       const response = await apiClient.createProcess(data);
-      toast.success('Processo criado com sucesso!');
-      
+      toast.success("Processo criado com sucesso!");
+
       if (onSuccess) {
         onSuccess(response.id);
       } else {
         navigate(`/processes/${response.id}`);
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Erro ao criar processo';
+      const message = error.response?.data?.message || "Erro ao criar processo";
       toast.error(message);
-      console.error('Erro ao criar processo:', error);
+      console.error("Erro ao criar processo:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -208,7 +219,7 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
             id="name"
             type="text"
             placeholder="Ex: Deploy em Produção"
-            {...register('name')}
+            {...register("name")}
           />
           {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
         </FormGroup>
@@ -218,7 +229,7 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
           <TextArea
             id="description"
             placeholder="Descrição detalhada do processo..."
-            {...register('description')}
+            {...register("description")}
           />
           {errors.description && (
             <ErrorMessage>{errors.description.message}</ErrorMessage>
@@ -227,7 +238,7 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
 
         <FormGroup>
           <Label htmlFor="category">Categoria *</Label>
-          <Select id="category" {...register('category')}>
+          <Select id="category" {...register("category")}>
             <option value="">Selecione uma categoria</option>
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
@@ -244,7 +255,7 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
           <Label htmlFor="requiredLevel">Nível de Acesso Mínimo *</Label>
           <Select
             id="requiredLevel"
-            {...register('requiredLevel', { valueAsNumber: true })}
+            {...register("requiredLevel", { valueAsNumber: true })}
           >
             {ROLE_LEVELS.map((level) => (
               <option key={level.value} value={level.value}>
@@ -263,7 +274,7 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
               id="is_active"
               type="checkbox"
               defaultChecked={true}
-              {...register('is_active')}
+              {...register("is_active")}
             />
             <Label htmlFor="is_active" style={{ margin: 0 }}>
               Processo Ativo
@@ -275,17 +286,13 @@ export const CreateProcessForm: React.FC<CreateProcessFormProps> = ({ onSuccess 
           <Button
             variant="secondary"
             type="button"
-            onClick={() => navigate('/processes')}
+            onClick={() => navigate("/processes")}
             disabled={isSubmitting}
           >
             Cancelar
           </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Criando...' : 'Criar Processo'}
+          <Button variant="primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Criando..." : "Criar Processo"}
           </Button>
         </ButtonGroup>
       </FormContainer>
