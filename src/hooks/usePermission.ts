@@ -1,4 +1,4 @@
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AuthContext";
 
 export const usePermission = () => {
   const { user } = useAuth();
@@ -8,7 +8,7 @@ export const usePermission = () => {
   };
 
   const getUserRole = (): string => {
-    return user?.roleName ?? 'Desconhecido';
+    return user?.roleName ?? "Desconhecido";
   };
 
   const canAccess = (requiredLevel: number): boolean => {
@@ -68,7 +68,7 @@ export const useRenderAccess = (requiredLevel?: number) => {
   if (!user) {
     return {
       shouldRender: false,
-      reason: 'Usuário não autenticado',
+      reason: "Usuário não autenticado",
     };
   }
 
