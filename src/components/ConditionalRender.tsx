@@ -1,5 +1,5 @@
-import React from 'react';
-import { usePermission } from '../hooks/usePermission';
+import React from "react";
+import { usePermission } from "../hooks/usePermission";
 
 interface ConditionalRenderProps {
   children: React.ReactNode;
@@ -27,15 +27,20 @@ export const ConditionalRender: React.FC<ConditionalRenderProps> = ({
   }
 
   if (isAdmin !== undefined) {
-    canRender = canRender && (isAdmin ? permission.isAdmin() : !permission.isAdmin());
+    canRender =
+      canRender && (isAdmin ? permission.isAdmin() : !permission.isAdmin());
   }
 
   if (isManager !== undefined) {
-    canRender = canRender && (isManager ? permission.isManager() : !permission.isManager());
+    canRender =
+      canRender &&
+      (isManager ? permission.isManager() : !permission.isManager());
   }
 
   if (isAnalyst !== undefined) {
-    canRender = canRender && (isAnalyst ? permission.isAnalyst() : !permission.isAnalyst());
+    canRender =
+      canRender &&
+      (isAnalyst ? permission.isAnalyst() : !permission.isAnalyst());
   }
 
   return <>{canRender ? children : fallback}</>;
@@ -47,6 +52,10 @@ interface IfProps {
   fallback?: React.ReactNode;
 }
 
-export const If: React.FC<IfProps> = ({ condition, children, fallback = null }) => {
+export const If: React.FC<IfProps> = ({
+  condition,
+  children,
+  fallback = null,
+}) => {
   return <>{condition ? children : fallback}</>;
 };
