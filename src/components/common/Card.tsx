@@ -1,6 +1,6 @@
-import React from 'react';
-import { styled } from '../../assets/styles/themes/stitches.config';
-import { motion } from 'framer-motion';
+import React from "react";
+import { styled } from "../../assets/styles/themes/stitches.config";
+import { motion } from "framer-motion";
 
 interface CardProps {
   title?: React.ReactNode;
@@ -9,111 +9,108 @@ interface CardProps {
   footer?: React.ReactNode;
   hoverable?: boolean;
   onClick?: () => void;
-  variant?: 'success' | 'warning' | 'error';
+  variant?: "success" | "warning" | "error";
 }
 
 const CardContainer = styled(motion.div, {
-  backgroundColor: '$bgSecondary',
-  border: '1px solid $borderPrimary',
-  borderRadius: '$lg',
-  overflow: 'hidden',
-  transition: 'all $normal',
-  display: 'flex',
-  flexDirection: 'column',
+  backgroundColor: "$bgSecondary",
+  border: "1px solid $borderPrimary",
+  borderRadius: "$lg",
+  overflow: "hidden",
+  transition: "all $normal",
+  display: "flex",
+  flexDirection: "column",
 
   variants: {
     hoverable: {
       true: {
-        cursor: 'pointer',
+        cursor: "pointer",
 
-        '&:hover': {
-          borderColor: '$primaryColor',
-          boxShadow: '$lg',
-          transform: 'translateY(-4px)',
+        "&:hover": {
+          borderColor: "$primaryColor",
+          boxShadow: "$lg",
+          transform: "translateY(-4px)",
         },
       },
     },
     variant: {
       success: {
-        borderColor: '$successColor',
+        borderColor: "$successColor",
 
-        '&:hover': {
-          borderColor: '$successColor',
-          boxShadow: '0 0 0 2px rgba(16, 185, 129, 0.1)',
+        "&:hover": {
+          borderColor: "$successColor",
+          boxShadow: "0 0 0 2px rgba(16, 185, 129, 0.1)",
         },
       },
       warning: {
-        borderColor: '$warningColor',
+        borderColor: "$warningColor",
 
-        '&:hover': {
-          borderColor: '$warningColor',
-          boxShadow: '0 0 0 2px rgba(245, 158, 11, 0.1)',
+        "&:hover": {
+          borderColor: "$warningColor",
+          boxShadow: "0 0 0 2px rgba(245, 158, 11, 0.1)",
         },
       },
       error: {
-        borderColor: '$errorColor',
+        borderColor: "$errorColor",
 
-        '&:hover': {
-          borderColor: '$errorColor',
-          boxShadow: '0 0 0 2px rgba(239, 68, 68, 0.1)',
+        "&:hover": {
+          borderColor: "$errorColor",
+          boxShadow: "0 0 0 2px rgba(239, 68, 68, 0.1)",
         },
       },
     },
   },
 });
 
-const CardHeader = styled('div', {
-  paddingLeft: '$lg',
-  paddingRight: '$lg',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  borderBottom: '1px solid $borderPrimary',
+const CardHeader = styled("div", {
+  paddingLeft: "$lg",
+  paddingRight: "$lg",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  borderBottom: "1px solid $borderPrimary",
 
   variants: {
     isEmpty: {
       true: {
-        display: 'none',
+        display: "none",
       },
     },
   },
 });
 
-const CardTitle = styled('h3', {
-  fontSize: '$lg',
-  fontWeight: '$semibold',
-  color: '$textPrimary',
+const CardTitle = styled("h3", {
+  fontSize: "$lg",
+  fontWeight: "$semibold",
+  color: "$textPrimary",
   margin: 0,
-  marginBottom: '$xs',
+  marginBottom: "$xs",
 });
 
-const CardSubtitle = styled('p', {
-  fontSize: '$sm',
-  color: '$textSecondary',
+const CardSubtitle = styled("p", {
+  fontSize: "$sm",
+  color: "$textSecondary",
   margin: 0,
 });
 
-const CardContent = styled('div', {
-  paddingLeft: '$lg',
-  paddingRight: '$lg',
-  paddingTop: '$lg',
-  paddingBottom: '$lg',
+const CardContent = styled("div", {
+  paddingLeft: "$lg",
+  paddingRight: "$lg",
+  paddingTop: "$lg",
+  paddingBottom: "$lg",
   flex: 1,
 });
 
-const CardFooter = styled('div', {
-  paddingLeft: '$lg',
-  paddingRight: '$lg',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  borderTop: '1px solid $borderPrimary',
-  display: 'flex',
-  gap: '$md',
-  justifyContent: 'flex-end',
+const CardFooter = styled("div", {
+  paddingLeft: "$lg",
+  paddingRight: "$lg",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  borderTop: "1px solid $borderPrimary",
+  display: "flex",
+  gap: "$md",
+  justifyContent: "flex-end",
 });
 
-/**
- * Componente Card reutilizável para exibir conteúdo em um contêiner estruturado
- */
 export const Card: React.FC<CardProps> = ({
   title,
   subtitle,
@@ -121,7 +118,7 @@ export const Card: React.FC<CardProps> = ({
   footer,
   hoverable = false,
   onClick,
-  variant = 'default',
+  variant = "default",
 }) => {
   const showHeader = title || subtitle;
 

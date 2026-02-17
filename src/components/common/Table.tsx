@@ -1,6 +1,6 @@
-import React from 'react';
-import { styled } from '../../assets/styles/themes/stitches.config';
-import { motion } from 'framer-motion';
+import React from "react";
+import { styled } from "../../assets/styles/themes/stitches.config";
+import { motion } from "framer-motion";
 
 interface TableColumn<T> {
   key: keyof T | string;
@@ -20,93 +20,89 @@ interface TableProps<T> {
   hoverable?: boolean;
 }
 
-const TableContainer = styled('div', {
-  overflowX: 'auto',
-  borderRadius: '$lg',
-  border: '1px solid $borderPrimary',
-  boxShadow: '$md',
+const TableContainer = styled("div", {
+  overflowX: "auto",
+  borderRadius: "$lg",
+  border: "1px solid $borderPrimary",
+  boxShadow: "$md",
 });
 
-const StyledTable = styled('table', {
-  width: '100%',
-  borderCollapse: 'collapse',
-  backgroundColor: '$bgSecondary',
+const StyledTable = styled("table", {
+  width: "100%",
+  borderCollapse: "collapse",
+  backgroundColor: "$bgSecondary",
 
   variants: {
     striped: {
       true: {
-        '& tbody tr:nth-child(odd)': {
-          backgroundColor: '$bgPrimary',
+        "& tbody tr:nth-child(odd)": {
+          backgroundColor: "$bgPrimary",
         },
       },
     },
   },
 });
 
-const TableHead = styled('thead', {
-  backgroundColor: '$bgTertiary',
-  borderBottom: '2px solid $borderPrimary',
+const TableHead = styled("thead", {
+  backgroundColor: "$bgTertiary",
+  borderBottom: "2px solid $borderPrimary",
 });
 
-const TableHeaderCell = styled('th', {
-  paddingLeft: '$lg',
-  paddingRight: '$lg',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  textAlign: 'left',
-  fontWeight: '$semibold',
-  fontSize: '$sm',
-  color: '$textSecondary',
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
+const TableHeaderCell = styled("th", {
+  paddingLeft: "$lg",
+  paddingRight: "$lg",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  textAlign: "left",
+  fontWeight: "$semibold",
+  fontSize: "$sm",
+  color: "$textSecondary",
+  textTransform: "uppercase",
+  letterSpacing: "0.5px",
 });
 
-const TableBody = styled('tbody', {});
+const TableBody = styled("tbody", {});
 
-const TableRow = styled('tr', {
-  borderBottom: '1px solid $borderPrimary',
-  transition: 'all $normal',
+const TableRow = styled("tr", {
+  borderBottom: "1px solid $borderPrimary",
+  transition: "all $normal",
 
   variants: {
     hoverable: {
       true: {
-        '&:hover': {
-          backgroundColor: '$bgTertiary',
-          cursor: 'pointer',
+        "&:hover": {
+          backgroundColor: "$bgTertiary",
+          cursor: "pointer",
         },
       },
     },
   },
 });
 
-const TableCell = styled('td', {
-  paddingLeft: '$lg',
-  paddingRight: '$lg',
-  paddingTop: '$md',
-  paddingBottom: '$md',
-  fontSize: '$sm',
-  color: '$textPrimary',
+const TableCell = styled("td", {
+  paddingLeft: "$lg",
+  paddingRight: "$lg",
+  paddingTop: "$md",
+  paddingBottom: "$md",
+  fontSize: "$sm",
+  color: "$textPrimary",
 });
 
-const EmptyState = styled('div', {
-  paddingTop: '$3xl',
-  paddingBottom: '$3xl',
-  textAlign: 'center',
-  color: '$textSecondary',
+const EmptyState = styled("div", {
+  paddingTop: "$3xl",
+  paddingBottom: "$3xl",
+  textAlign: "center",
+  color: "$textSecondary",
 });
 
-const LoadingState = styled('div', {
-  paddingTop: '$3xl',
-  paddingBottom: '$3xl',
-  textAlign: 'center',
-  color: '$textSecondary',
-  fontSize: '$lg',
+const LoadingState = styled("div", {
+  paddingTop: "$3xl",
+  paddingBottom: "$3xl",
+  textAlign: "center",
+  color: "$textSecondary",
+  fontSize: "$lg",
 });
 
-/**
- * Componente de tabela genérica e reutilizável
- * Suporta customização de colunas, renderização customizada, carregamento e estado vazio
- */
 export const Table = React.forwardRef<HTMLDivElement, TableProps<any>>(
   (
     {
@@ -114,15 +110,15 @@ export const Table = React.forwardRef<HTMLDivElement, TableProps<any>>(
       data,
       rowKey = (_row, index) => index,
       loading = false,
-      empty = 'Nenhum dado disponível',
+      empty = "Nenhum dado disponível",
       onRowClick,
       striped = true,
       hoverable = true,
     },
-    ref
+    ref,
   ) => {
     const getRowKey = (row: any, index: number) => {
-      if (typeof rowKey === 'function') {
+      if (typeof rowKey === "function") {
         return rowKey(row, index);
       }
       return row[rowKey] || index;
@@ -217,7 +213,7 @@ export const Table = React.forwardRef<HTMLDivElement, TableProps<any>>(
         </StyledTable>
       </TableContainer>
     );
-  }
+  },
 );
 
-Table.displayName = 'Table';
+Table.displayName = "Table";
