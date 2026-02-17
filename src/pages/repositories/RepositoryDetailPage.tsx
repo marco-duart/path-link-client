@@ -1,202 +1,202 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { styled } from '@/assets/styles/themes/stitches.config';
-import { usePermission } from '@/hooks/usePermission';
-import apiClient from '@/services/api/client';
-import type { Repository } from '@/types';
-import { FiArrowLeft, FiEdit2, FiTrash2, FiExternalLink } from 'react-icons/fi';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { styled } from "@/assets/styles/themes/stitches.config";
+import { usePermission } from "@/hooks/usePermission";
+import apiClient from "@/services/api/client";
+import type { Repository } from "@/types";
+import { FiArrowLeft, FiEdit2, FiTrash2, FiExternalLink } from "react-icons/fi";
 
-const PageContainer = styled('div', {
-  padding: '$lg',
-  maxWidth: '900px',
-  margin: '0 auto',
+const PageContainer = styled("div", {
+  padding: "$lg",
+  maxWidth: "900px",
+  margin: "0 auto",
 });
 
-const Header = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '$2xl',
-  gap: '$lg',
+const Header = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "$2xl",
+  gap: "$lg",
 
-  '@xs': {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  "@xs": {
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
 });
 
-const TitleGroup = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$lg',
+const TitleGroup = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "$lg",
 });
 
-const BackButton = styled('button', {
-  backgroundColor: 'transparent',
-  border: 'none',
-  color: '$textPrimary',
-  cursor: 'pointer',
-  fontSize: '1.5rem',
-  padding: '$sm',
-  borderRadius: '$md',
-  transition: 'all $normal',
+const BackButton = styled("button", {
+  backgroundColor: "transparent",
+  border: "none",
+  color: "$textPrimary",
+  cursor: "pointer",
+  fontSize: "1.5rem",
+  padding: "$sm",
+  borderRadius: "$md",
+  transition: "all $normal",
 
-  '&:hover': {
-    backgroundColor: '$bgTertiary',
-    color: '$primaryColor',
+  "&:hover": {
+    backgroundColor: "$bgTertiary",
+    color: "$primaryColor",
   },
 });
 
-const Title = styled('h1', {
-  fontSize: '2rem',
+const Title = styled("h1", {
+  fontSize: "2rem",
   fontWeight: 700,
-  color: '$textPrimary',
+  color: "$textPrimary",
   margin: 0,
 });
 
-const ActionButtons = styled('div', {
-  display: 'flex',
-  gap: '$md',
+const ActionButtons = styled("div", {
+  display: "flex",
+  gap: "$md",
 
-  '@xs': {
-    width: '100%',
-    flexDirection: 'column',
+  "@xs": {
+    width: "100%",
+    flexDirection: "column",
   },
 });
 
-const Button = styled('button', {
-  padding: '$md $lg',
-  borderRadius: '$md',
-  fontSize: '$sm',
-  fontWeight: '$semibold',
-  border: 'none',
-  cursor: 'pointer',
-  transition: 'all $normal',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$sm',
+const Button = styled("button", {
+  padding: "$md $lg",
+  borderRadius: "$md",
+  fontSize: "$sm",
+  fontWeight: "$semibold",
+  border: "none",
+  cursor: "pointer",
+  transition: "all $normal",
+  display: "flex",
+  alignItems: "center",
+  gap: "$sm",
 
   variants: {
     variant: {
       primary: {
-        backgroundColor: '$primaryColor',
-        color: '$bgPrimary',
+        backgroundColor: "$primaryColor",
+        color: "$bgPrimary",
 
-        '&:hover': {
-          backgroundColor: '$borderAccent',
-          transform: 'translateY(-2px)',
+        "&:hover": {
+          backgroundColor: "$borderAccent",
+          transform: "translateY(-2px)",
         },
       },
       secondary: {
-        backgroundColor: '$bgTertiary',
-        color: '$textPrimary',
-        border: '1px solid $borderPrimary',
+        backgroundColor: "$bgTertiary",
+        color: "$textPrimary",
+        border: "1px solid $borderPrimary",
 
-        '&:hover': {
-          backgroundColor: '$borderPrimary',
+        "&:hover": {
+          backgroundColor: "$borderPrimary",
         },
       },
       danger: {
-        backgroundColor: '#ef4444',
-        color: '$bgPrimary',
+        backgroundColor: "#ef4444",
+        color: "$bgPrimary",
 
-        '&:hover': {
-          backgroundColor: '#dc2626',
-          transform: 'translateY(-2px)',
+        "&:hover": {
+          backgroundColor: "#dc2626",
+          transform: "translateY(-2px)",
         },
       },
     },
   },
 
-  '@xs': {
-    width: '100%',
-    justifyContent: 'center',
+  "@xs": {
+    width: "100%",
+    justifyContent: "center",
   },
 });
 
 const ContentCard = styled(motion.div, {
-  backgroundColor: '$bgSecondary',
-  border: '1px solid $borderPrimary',
-  borderRadius: '$lg',
-  padding: '$xl',
-  marginBottom: '$xl',
+  backgroundColor: "$bgSecondary",
+  border: "1px solid $borderPrimary",
+  borderRadius: "$lg",
+  padding: "$xl",
+  marginBottom: "$xl",
 });
 
-const InfoGrid = styled('div', {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '$xl',
-  marginBottom: '$xl',
+const InfoGrid = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: "$xl",
+  marginBottom: "$xl",
 
-  '@xs': {
-    gridTemplateColumns: '1fr',
+  "@xs": {
+    gridTemplateColumns: "1fr",
   },
 });
 
-const InfoItem = styled('div', {});
+const InfoItem = styled("div", {});
 
-const InfoLabel = styled('label', {
-  display: 'block',
-  fontSize: '$xs',
-  fontWeight: '$semibold',
-  color: '$textMuted',
-  textTransform: 'uppercase',
-  letterSpacing: '1px',
-  marginBottom: '$sm',
+const InfoLabel = styled("label", {
+  display: "block",
+  fontSize: "$xs",
+  fontWeight: "$semibold",
+  color: "$textMuted",
+  textTransform: "uppercase",
+  letterSpacing: "1px",
+  marginBottom: "$sm",
 });
 
-const InfoValue = styled('p', {
-  fontSize: '$sm',
-  color: '$textPrimary',
+const InfoValue = styled("p", {
+  fontSize: "$sm",
+  color: "$textPrimary",
   margin: 0,
-  padding: '$md',
-  backgroundColor: '$bgPrimary',
-  borderRadius: '$md',
-  border: '1px solid $borderPrimary',
-  wordBreak: 'break-word',
+  padding: "$md",
+  backgroundColor: "$bgPrimary",
+  borderRadius: "$md",
+  border: "1px solid $borderPrimary",
+  wordBreak: "break-word",
 });
 
-const LinkValue = styled('a', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$sm',
-  fontSize: '$sm',
-  color: '$primaryColor',
-  textDecoration: 'none',
-  padding: '$md',
-  backgroundColor: '$bgPrimary',
-  borderRadius: '$md',
-  border: '1px solid $borderPrimary',
-  wordBreak: 'break-word',
+const LinkValue = styled("a", {
+  display: "flex",
+  alignItems: "center",
+  gap: "$sm",
+  fontSize: "$sm",
+  color: "$primaryColor",
+  textDecoration: "none",
+  padding: "$md",
+  backgroundColor: "$bgPrimary",
+  borderRadius: "$md",
+  border: "1px solid $borderPrimary",
+  wordBreak: "break-word",
 
-  '&:hover': {
-    color: '$borderAccent',
+  "&:hover": {
+    color: "$borderAccent",
   },
 });
 
-const DescriptionSection = styled('div', {
-  marginTop: '$xl',
-  paddingTop: '$xl',
-  borderTop: '1px solid $borderPrimary',
+const DescriptionSection = styled("div", {
+  marginTop: "$xl",
+  paddingTop: "$xl",
+  borderTop: "1px solid $borderPrimary",
 });
 
-const LoadingContainer = styled('div', {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: '400px',
-  color: '$textMuted',
+const LoadingContainer = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minHeight: "400px",
+  color: "$textMuted",
 });
 
 const getRoleLevelName = (level: number): string => {
   const levels: Record<number, string> = {
-    10: 'Auxiliar',
-    20: 'Técnico',
-    30: 'Gestor',
-    40: 'Gerente',
-    50: 'Administrador',
+    10: "Auxiliar",
+    20: "Técnico",
+    30: "Gestor",
+    40: "Gerente",
+    50: "Administrador",
   };
   return levels[level] || `Nível ${level}`;
 };
@@ -219,16 +219,16 @@ export const RepositoryDetailPage: React.FC = () => {
       const data = await apiClient.getRepository(repositoryId);
       setRepository(data);
     } catch (error) {
-      console.error('Erro ao carregar repositório:', error);
-      toast.error('Erro ao carregar repositório');
-      navigate('/repositories');
+      console.error("Erro ao carregar repositório:", error);
+      toast.error("Erro ao carregar repositório");
+      navigate("/repositories");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Tem certeza que deseja deletar este repositório?')) {
+    if (!window.confirm("Tem certeza que deseja deletar este repositório?")) {
       return;
     }
 
@@ -236,11 +236,13 @@ export const RepositoryDetailPage: React.FC = () => {
 
     try {
       await apiClient.deleteRepository(id);
-      toast.success('Repositório deletado com sucesso');
-      navigate('/repositories');
+      toast.success("Repositório deletado com sucesso");
+      navigate("/repositories");
     } catch (error: any) {
-      console.error('Erro ao deletar:', error);
-      toast.error(error.response?.data?.message || 'Erro ao deletar repositório');
+      console.error("Erro ao deletar:", error);
+      toast.error(
+        error.response?.data?.message || "Erro ao deletar repositório",
+      );
     }
   };
 
@@ -264,7 +266,7 @@ export const RepositoryDetailPage: React.FC = () => {
     <PageContainer>
       <Header>
         <TitleGroup>
-          <BackButton onClick={() => navigate('/repositories')}>
+          <BackButton onClick={() => navigate("/repositories")}>
             <FiArrowLeft />
           </BackButton>
           <Title>{repository.name}</Title>
@@ -322,7 +324,7 @@ export const RepositoryDetailPage: React.FC = () => {
 
         <DescriptionSection>
           <InfoLabel>Descrição</InfoLabel>
-          <InfoValue>{repository.description || 'Sem descrição'}</InfoValue>
+          <InfoValue>{repository.description || "Sem descrição"}</InfoValue>
         </DescriptionSection>
       </ContentCard>
     </PageContainer>
