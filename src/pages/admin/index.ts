@@ -1,2 +1,4 @@
-export { UsersPage } from './UsersPage';
-export { SettingsPage } from './SettingsPage';
+export { UsersPage } from "./UsersPage";
+export { UserDetailPage } from "./UserDetailPage";
+export { UserForm } from "./UserForm";
+export { SettingsPage } from "./SettingsPage";

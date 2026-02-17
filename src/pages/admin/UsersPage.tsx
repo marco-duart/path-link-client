@@ -1,43 +1,43 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { Table, Button } from '@/components/common';
-import { ConditionalRender } from '@/components/ConditionalRender';
-import { getRoleColor, formatRoleName } from '@/utils/roleHelpers';
-import apiClient from '@/services/api/client';
-import { styled } from '@/assets/styles/themes/stitches.config';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { Table, Button } from "@/components/common";
+import { ConditionalRender } from "@/components/ConditionalRender";
+import { getRoleColor, formatRoleName } from "@/utils/roleHelpers";
+import apiClient from "@/services/api/client";
+import { styled } from "@/assets/styles/themes/stitches.config";
 
-const PageContainer = styled('div', {
-  padding: '$spacing-xl',
-  maxWidth: '1400px',
-  margin: '0 auto',
+const PageContainer = styled("div", {
+  padding: "$spacing-xl",
+  maxWidth: "1400px",
+  margin: "0 auto",
 });
 
-const HeaderSection = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '$spacing-2xl',
+const HeaderSection = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "$spacing-2xl",
 
-  '@md': {
-    flexDirection: 'column',
-    gap: '$spacing-lg',
-    alignItems: 'flex-start',
+  "@md": {
+    flexDirection: "column",
+    gap: "$spacing-lg",
+    alignItems: "flex-start",
   },
 });
 
-const Title = styled('h1', {
-  fontSize: '2rem',
+const Title = styled("h1", {
+  fontSize: "2rem",
   fontWeight: 700,
-  color: '$text-primary',
+  color: "$text-primary",
   margin: 0,
 });
 
-const RoleBadge = styled('span', {
-  padding: '0.25rem 0.75rem',
-  borderRadius: '4px',
-  fontSize: '0.875rem',
+const RoleBadge = styled("span", {
+  padding: "0.25rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
   fontWeight: 500,
 });
 
@@ -65,28 +65,28 @@ export function UsersPage() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.request('get', '/users');
+      const data = await apiClient.request("get", "/users");
       setUsers(data as User[]);
     } catch (error) {
-      console.error('Erro ao carregar usuários:', error);
-      toast.error('Erro ao carregar usuários');
+      console.error("Erro ao carregar usuários:", error);
+      toast.error("Erro ao carregar usuários");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Tem certeza que deseja deletar este usuário?')) {
+    if (!window.confirm("Tem certeza que deseja deletar este usuário?")) {
       return;
     }
 
     try {
-      await apiClient.request('delete', `/users/${id}`);
-      toast.success('Usuário deletado com sucesso');
+      await apiClient.request("delete", `/users/${id}`);
+      toast.success("Usuário deletado com sucesso");
       loadUsers();
     } catch (error) {
-      console.error('Erro ao deletar:', error);
-      toast.error('Erro ao deletar usuário');
+      console.error("Erro ao deletar:", error);
+      toast.error("Erro ao deletar usuário");
     }
   };
 
@@ -102,7 +102,7 @@ export function UsersPage() {
           <ConditionalRender requiredLevel={99}>
             <Button
               variant="primary"
-              onClick={() => navigate('/admin/users/new')}
+              onClick={() => navigate("/admin/users/new")}
             >
               + Novo Usuário
             </Button>
@@ -112,29 +112,27 @@ export function UsersPage() {
         <Table
           columns={[
             {
-              key: 'name',
-              label: 'Nome',
-              width: '180px',
+              key: "name",
+              label: "Nome",
+              width: "180px",
             },
             {
-              key: 'email',
-              label: 'Email',
-              width: '220px',
+              key: "email",
+              label: "Email",
+              width: "220px",
               render: (value) => (
-                <span style={{ color: '#cbd5e1' }}>
-                  {value}
-                </span>
+                <span style={{ color: "#cbd5e1" }}>{value}</span>
               ),
             },
             {
-              key: 'roleName',
-              label: 'Role',
-              width: '140px',
+              key: "roleName",
+              label: "Role",
+              width: "140px",
               render: (roleName: any) => (
                 <RoleBadge
                   style={{
                     background: getRoleColor(roleName),
-                    color: '#0f172a',
+                    color: "#0f172a",
                   }}
                 >
                   {formatRoleName(roleName)}
@@ -142,31 +140,31 @@ export function UsersPage() {
               ),
             },
             {
-              key: 'department',
-              label: 'Departamento',
-              width: '150px',
+              key: "department",
+              label: "Departamento",
+              width: "150px",
               render: (value: any) => (
-                <span style={{ color: '#cbd5e1' }}>
-                  {(value as any)?.name || '-'}
+                <span style={{ color: "#cbd5e1" }}>
+                  {(value as any)?.name || "-"}
                 </span>
               ),
             },
             {
-              key: 'team',
-              label: 'Time',
-              width: '150px',
+              key: "team",
+              label: "Time",
+              width: "150px",
               render: (value: any) => (
-                <span style={{ color: '#cbd5e1' }}>
-                  {(value as any)?.name || '-'}
+                <span style={{ color: "#cbd5e1" }}>
+                  {(value as any)?.name || "-"}
                 </span>
               ),
             },
             {
-              key: 'id',
-              label: 'Ações',
-              width: '200px',
+              key: "id",
+              label: "Ações",
+              width: "200px",
               render: (id: number) => (
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: "flex", gap: "8px" }}>
                   <Button
                     size="sm"
                     variant="secondary"
