@@ -1,62 +1,62 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { Card, Button } from '@/components/common';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { styled } from '@/assets/styles/themes/stitches.config';
-import { getRoleColor, formatRoleName } from '@/utils/roleHelpers';
+import { useAuth } from "@/contexts/AuthContext";
+import { Card, Button } from "@/components/common";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { styled } from "@/assets/styles/themes/stitches.config";
+import { getRoleColor, formatRoleName } from "@/utils/roleHelpers";
 
-const PageContainer = styled('div', {
-  padding: '$spacing-xl',
-  maxWidth: '900px',
-  margin: '0 auto',
+const PageContainer = styled("div", {
+  padding: "$spacing-xl",
+  maxWidth: "900px",
+  margin: "0 auto",
 });
 
-const Title = styled('h1', {
-  fontSize: '2rem',
+const Title = styled("h1", {
+  fontSize: "2rem",
   fontWeight: 700,
-  color: '$text-primary',
-  margin: '0 0 $spacing-2xl 0',
+  color: "$text-primary",
+  margin: "0 0 $spacing-2xl 0",
 });
 
-const ContentGrid = styled('div', {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '$spacing-lg',
-  marginBottom: '$spacing-2xl',
+const ContentGrid = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: "$spacing-lg",
+  marginBottom: "$spacing-2xl",
 
-  '@md': {
-    gridTemplateColumns: '1fr',
+  "@md": {
+    gridTemplateColumns: "1fr",
   },
 });
 
-const InfoGroup = styled('div', {
-  marginBottom: '$spacing-lg',
+const InfoGroup = styled("div", {
+  marginBottom: "$spacing-lg",
 
-  '&:last-child': {
+  "&:last-child": {
     marginBottom: 0,
   },
 });
 
-const Label = styled('label', {
-  display: 'block',
-  fontSize: '0.875rem',
+const Label = styled("label", {
+  display: "block",
+  fontSize: "0.875rem",
   fontWeight: 500,
-  color: '$text-secondary',
-  marginBottom: '$spacing-sm',
+  color: "$text-secondary",
+  marginBottom: "$spacing-sm",
 });
 
-const Value = styled('p', {
-  color: '$text-primary',
+const Value = styled("p", {
+  color: "$text-primary",
   margin: 0,
-  fontSize: '1rem',
+  fontSize: "1rem",
   fontWeight: 500,
 });
 
-const RoleBadge = styled('span', {
-  display: 'inline-block',
-  padding: '0.5rem 1rem',
-  borderRadius: '6px',
-  fontSize: '0.875rem',
+const RoleBadge = styled("span", {
+  display: "inline-block",
+  padding: "0.5rem 1rem",
+  borderRadius: "6px",
+  fontSize: "0.875rem",
   fontWeight: 600,
 });
 
@@ -65,13 +65,13 @@ export function ProfilePage() {
 
   const handleChangePassword = async () => {
     // TODO: Implementar modal para mudar senha
-    toast.error('Funcionalidade em desenvolvimento');
+    toast.error("Funcionalidade em desenvolvimento");
   };
 
   const handleLogout = () => {
-    if (window.confirm('Tem certeza que deseja sair?')) {
+    if (window.confirm("Tem certeza que deseja sair?")) {
       logout();
-      toast.success('Desconectado com sucesso');
+      toast.success("Desconectado com sucesso");
     }
   };
 
@@ -80,7 +80,9 @@ export function ProfilePage() {
       <PageContainer>
         <Title>Perfil</Title>
         <Card>
-          <p style={{ color: '#cbd5e1' }}>Carregando informações do usuário...</p>
+          <p style={{ color: "#cbd5e1" }}>
+            Carregando informações do usuário...
+          </p>
         </Card>
       </PageContainer>
     );
@@ -112,7 +114,7 @@ export function ProfilePage() {
               <RoleBadge
                 style={{
                   background: getRoleColor(user.roleName),
-                  color: '#0f172a',
+                  color: "#0f172a",
                 }}
               >
                 {formatRoleName(user.roleName)}
@@ -135,7 +137,13 @@ export function ProfilePage() {
           </Card>
 
           <Card title="Ações">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+              }}
+            >
               <Button
                 variant="secondary"
                 fullWidth
@@ -143,11 +151,7 @@ export function ProfilePage() {
               >
                 Alterar Senha
               </Button>
-              <Button
-                variant="error"
-                fullWidth
-                onClick={handleLogout}
-              >
+              <Button variant="error" fullWidth onClick={handleLogout}>
                 Sair
               </Button>
             </div>
@@ -157,23 +161,21 @@ export function ProfilePage() {
         <Card title="Informações Adicionais">
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '2rem',
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "2rem",
             }}
           >
             <InfoGroup>
               <Label>ID</Label>
-              <Value style={{ fontSize: '0.875rem', color: '#0ea5e9' }}>
+              <Value style={{ fontSize: "0.875rem", color: "#0ea5e9" }}>
                 #{user.id}
               </Value>
             </InfoGroup>
 
             <InfoGroup>
               <Label>Nível de Acesso</Label>
-              <Value style={{ fontSize: '0.875rem' }}>
-                {user.roleLevel}
-              </Value>
+              <Value style={{ fontSize: "0.875rem" }}>{user.roleLevel}</Value>
             </InfoGroup>
           </div>
         </Card>
