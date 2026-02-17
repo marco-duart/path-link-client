@@ -283,6 +283,40 @@ export interface CreateRepositoryDTO {
 
 export interface UpdateRepositoryDTO extends Partial<CreateRepositoryDTO> {}
 
+// Deploy Types
+export interface Deploy {
+  id: string;
+  name: string;
+  type: string;
+  environment: string;
+  region?: string;
+  endpoint: string;
+  description?: string;
+  notes?: string;
+  credentialsId?: string;
+  departmentId?: string;
+  teamId?: number;
+  requiredLevel: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateDeployDTO {
+  name: string;
+  type: string;
+  environment: string;
+  region?: string;
+  endpoint: string;
+  description?: string;
+  notes?: string;
+  credentialsId?: string;
+  departmentId?: string;
+  teamId?: number;
+  requiredLevel?: number;
+}
+
+export interface UpdateDeployDTO extends Partial<CreateDeployDTO> {}
+
 // Database Types
 export interface Database {
   id: string;

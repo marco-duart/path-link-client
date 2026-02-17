@@ -11,6 +11,7 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProcessesPage, ProcessDetailPage, CreateProcessPage, CreateStepPage, EditStepPage } from '../pages/processes';
 import { DatabasesPage, DatabaseForm, DatabaseDetailPage } from '../pages/databases';
 import { RepositoriesPage, RepositoryForm, RepositoryDetailPage } from '../pages/repositories';
+import { DeploysPage, DeployForm, DeployDetailPage } from '../pages/deploys';
 import { LinksPage, LinkDetailPage, LinkForm } from '../pages/links';
 import { ConfigurationItemsPage, ConfigurationItemDetailPage, ConfigurationItemForm } from '../pages/configuration-items';
 import { EnvironmentVariablesPage, EnvironmentVariableDetailPage, EnvironmentVariableForm } from '../pages/environment-variables';
@@ -106,6 +107,11 @@ export const AppRoutes = () => {
           <Route path="/repositories/new" element={<ProtectedRoute requiredLevel={30}><RepositoryForm /></ProtectedRoute>} />
           <Route path="/repositories/:id" element={<RepositoryDetailPage />} />
           <Route path="/repositories/:id/edit" element={<ProtectedRoute requiredLevel={40}><RepositoryForm isEditing={true} /></ProtectedRoute>} />
+
+          <Route path="/deploys" element={<DeploysPage />} />
+          <Route path="/deploys/new" element={<ProtectedRoute requiredLevel={30}><DeployForm /></ProtectedRoute>} />
+          <Route path="/deploys/:id" element={<DeployDetailPage />} />
+          <Route path="/deploys/:id/edit" element={<ProtectedRoute requiredLevel={40}><DeployForm isEditing={true} /></ProtectedRoute>} />
 
           <Route path="/links" element={<LinksPage />} />
           <Route path="/links/new" element={<ProtectedRoute requiredLevel={30}><LinkForm /></ProtectedRoute>} />

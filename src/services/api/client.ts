@@ -245,6 +245,31 @@ class ApiClient {
     await this.client.delete(`/repositories/${id}`);
   }
 
+  // ==================== DEPLOYS ====================
+  async getDeploys() {
+    const response = await this.client.get('/deploys');
+    return response.data;
+  }
+
+  async getDeploy(id: string) {
+    const response = await this.client.get(`/deploys/${id}`);
+    return response.data;
+  }
+
+  async createDeploy(data: any) {
+    const response = await this.client.post('/deploys', data);
+    return response.data;
+  }
+
+  async updateDeploy(id: string, data: any) {
+    const response = await this.client.patch(`/deploys/${id}`, data);
+    return response.data;
+  }
+
+  async deleteDeploy(id: string) {
+    await this.client.delete(`/deploys/${id}`);
+  }
+
   // ==================== DATABASES ====================
   async getDatabases() {
     const response = await this.client.get('/databases');

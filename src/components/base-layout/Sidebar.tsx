@@ -16,6 +16,7 @@ import {
   FiKey,
   FiLock,
   FiX,
+  FiCloud,
 } from "react-icons/fi";
 
 const SidebarContainer = styled("aside", {
@@ -180,6 +181,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: "Repositórios",
       path: "/repositories",
       icon: <FiGitBranch size={18} />,
+    },
+    {
+      label: "Deploys",
+      path: "/deploys",
+      icon: <FiCloud size={18} />,
     },
     {
       label: "Links",
