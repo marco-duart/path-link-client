@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,90 +10,100 @@ import {
   type SortingState,
   type ColumnFiltersState,
   type PaginationState,
-} from '@tanstack/react-table';
-import { createColumnHelper } from '@tanstack/react-table';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { styled } from '@/assets/styles/themes/stitches.config';
-import { ConditionalRender } from '@/components/ConditionalRender';
-import { usePermission } from '@/hooks/usePermission';
-import apiClient from '@/services/api/client';
-import type { Database } from '@/types';
-import { FiEye, FiEdit2, FiTrash2, FiChevronUp, FiChevronDown, FiChevronsLeft, FiChevronsRight, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+} from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { styled } from "@/assets/styles/themes/stitches.config";
+import { ConditionalRender } from "@/components/ConditionalRender";
+import { usePermission } from "@/hooks/usePermission";
+import apiClient from "@/services/api/client";
+import type { Database } from "@/types";
+import {
+  FiEye,
+  FiEdit2,
+  FiTrash2,
+  FiChevronUp,
+  FiChevronDown,
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 
-const PageContainer = styled('div', {
-  padding: '$lg',
-  maxWidth: '1400px',
-  margin: '0 auto',
+const PageContainer = styled("div", {
+  padding: "$lg",
+  maxWidth: "1400px",
+  margin: "0 auto",
 });
 
-const HeaderSection = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '$2xl',
-  gap: '$lg',
+const HeaderSection = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "$2xl",
+  gap: "$lg",
 
-  '@xs': {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  "@xs": {
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
 });
 
-const Title = styled('h1', {
-  fontSize: '2rem',
+const Title = styled("h1", {
+  fontSize: "2rem",
   fontWeight: 700,
-  color: '$textPrimary',
+  color: "$textPrimary",
   margin: 0,
 });
 
-const Button = styled('button', {
-  padding: '$md $lg',
-  borderRadius: '$md',
-  fontSize: '$sm',
-  fontWeight: '$semibold',
-  border: 'none',
-  cursor: 'pointer',
-  transition: 'all $normal',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$sm',
+const Button = styled("button", {
+  padding: "$md $lg",
+  borderRadius: "$md",
+  fontSize: "$sm",
+  fontWeight: "$semibold",
+  border: "none",
+  cursor: "pointer",
+  transition: "all $normal",
+  display: "flex",
+  alignItems: "center",
+  gap: "$sm",
 
   variants: {
     variant: {
       primary: {
-        backgroundColor: '$primaryColor',
-        color: '$bgPrimary',
+        backgroundColor: "$primaryColor",
+        color: "$bgPrimary",
 
-        '&:hover': {
-          backgroundColor: '$borderAccent',
-          transform: 'translateY(-2px)',
+        "&:hover": {
+          backgroundColor: "$borderAccent",
+          transform: "translateY(-2px)",
         },
       },
       secondary: {
-        backgroundColor: '$bgTertiary',
-        color: '$textPrimary',
-        border: '1px solid $borderPrimary',
+        backgroundColor: "$bgTertiary",
+        color: "$textPrimary",
+        border: "1px solid $borderPrimary",
 
-        '&:hover': {
-          backgroundColor: '$borderPrimary',
+        "&:hover": {
+          backgroundColor: "$borderPrimary",
         },
       },
       danger: {
-        backgroundColor: '#ef4444',
-        color: '$bgPrimary',
+        backgroundColor: "#ef4444",
+        color: "$bgPrimary",
 
-        '&:hover': {
-          backgroundColor: '#dc2626',
+        "&:hover": {
+          backgroundColor: "#dc2626",
         },
       },
       ghost: {
-        backgroundColor: 'transparent',
-        color: '$textSecondary',
-        border: 'none',
+        backgroundColor: "transparent",
+        color: "$textSecondary",
+        border: "none",
 
-        '&:hover': {
-          color: '$primaryColor',
+        "&:hover": {
+          color: "$primaryColor",
         },
       },
     },
@@ -101,85 +111,85 @@ const Button = styled('button', {
 });
 
 const TableContainer = styled(motion.div, {
-  backgroundColor: '$bgSecondary',
-  border: '1px solid $borderPrimary',
-  borderRadius: '$lg',
-  overflow: 'hidden',
+  backgroundColor: "$bgSecondary",
+  border: "1px solid $borderPrimary",
+  borderRadius: "$lg",
+  overflow: "hidden",
 });
 
-const StyledTable = styled('table', {
-  width: '100%',
-  borderCollapse: 'collapse',
+const StyledTable = styled("table", {
+  width: "100%",
+  borderCollapse: "collapse",
 
-  '& thead': {
-    backgroundColor: '$bgPrimary',
-    borderBottom: '2px solid $borderPrimary',
+  "& thead": {
+    backgroundColor: "$bgPrimary",
+    borderBottom: "2px solid $borderPrimary",
   },
 
-  '& th': {
-    padding: '$md $lg',
-    textAlign: 'left',
-    fontSize: '$sm',
-    fontWeight: '$semibold',
-    color: '$textSecondary',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
+  "& th": {
+    padding: "$md $lg",
+    textAlign: "left",
+    fontSize: "$sm",
+    fontWeight: "$semibold",
+    color: "$textSecondary",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
 
-  '& tbody tr': {
-    borderBottom: '1px solid $borderPrimary',
-    transition: 'all $normal',
+  "& tbody tr": {
+    borderBottom: "1px solid $borderPrimary",
+    transition: "all $normal",
 
-    '&:hover': {
-      backgroundColor: '$bgPrimary',
+    "&:hover": {
+      backgroundColor: "$bgPrimary",
     },
   },
 
-  '& td': {
-    padding: '$md $lg',
-    fontSize: '$sm',
-    color: '$textPrimary',
+  "& td": {
+    padding: "$md $lg",
+    fontSize: "$sm",
+    color: "$textPrimary",
   },
 });
 
-const ActionCell = styled('div', {
-  display: 'flex',
-  gap: '$sm',
-  alignItems: 'center',
+const ActionCell = styled("div", {
+  display: "flex",
+  gap: "$sm",
+  alignItems: "center",
 });
 
-const SortIcon = styled('span', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '$xs',
-  cursor: 'pointer',
-  userSelect: 'none',
+const SortIcon = styled("span", {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "$xs",
+  cursor: "pointer",
+  userSelect: "none",
 });
 
-const PaginationContainer = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '$lg',
-  borderTop: '1px solid $borderPrimary',
-  gap: '$md',
+const PaginationContainer = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "$lg",
+  borderTop: "1px solid $borderPrimary",
+  gap: "$md",
 
-  '@xs': {
-    flexDirection: 'column',
-    justifyContent: 'center',
+  "@xs": {
+    flexDirection: "column",
+    justifyContent: "center",
   },
 });
 
-const PaginationButtons = styled('div', {
-  display: 'flex',
-  gap: '$xs',
-  alignItems: 'center',
+const PaginationButtons = styled("div", {
+  display: "flex",
+  gap: "$xs",
+  alignItems: "center",
 });
 
-const EmptyState = styled('div', {
-  padding: '$4xl $lg',
-  textAlign: 'center',
-  color: '$textMuted',
+const EmptyState = styled("div", {
+  padding: "$4xl $lg",
+  textAlign: "center",
+  color: "$textMuted",
 });
 
 export function DatabasesPage() {
@@ -204,8 +214,8 @@ export function DatabasesPage() {
       const data = await apiClient.getDatabases();
       setDatabases(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Erro ao carregar bancos de dados:', error);
-      toast.error('Erro ao carregar bancos de dados');
+      console.error("Erro ao carregar bancos de dados:", error);
+      toast.error("Erro ao carregar bancos de dados");
       setDatabases([]);
     } finally {
       setLoading(false);
@@ -213,17 +223,21 @@ export function DatabasesPage() {
   };
 
   const handleDelete = async (databaseId: string) => {
-    if (!window.confirm('Tem certeza que deseja deletar este banco de dados?')) {
+    if (
+      !window.confirm("Tem certeza que deseja deletar este banco de dados?")
+    ) {
       return;
     }
 
     try {
       await apiClient.deleteDatabase(databaseId);
-      toast.success('Banco de dados deletado com sucesso');
+      toast.success("Banco de dados deletado com sucesso");
       loadDatabases();
     } catch (error: any) {
-      console.error('Erro ao deletar:', error);
-      toast.error(error.response?.data?.message || 'Erro ao deletar banco de dados');
+      console.error("Erro ao deletar:", error);
+      toast.error(
+        error.response?.data?.message || "Erro ao deletar banco de dados",
+      );
     }
   };
 
@@ -231,50 +245,50 @@ export function DatabasesPage() {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('name', {
-        header: 'Nome',
+      columnHelper.accessor("name", {
+        header: "Nome",
         size: 200,
         cell: (info) => <strong>{info.getValue()}</strong>,
       }),
-      columnHelper.accessor('type', {
-        header: 'Tipo',
+      columnHelper.accessor("type", {
+        header: "Tipo",
         size: 120,
         cell: (info) => (
-          <span style={{ color: '#8b5cf6', fontWeight: 500 }}>
+          <span style={{ color: "#8b5cf6", fontWeight: 500 }}>
             {info.getValue()}
           </span>
         ),
       }),
-      columnHelper.accessor('host', {
-        header: 'Host',
+      columnHelper.accessor("host", {
+        header: "Host",
         size: 150,
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor('port', {
-        header: 'Porta',
+      columnHelper.accessor("port", {
+        header: "Porta",
         size: 100,
         cell: (info) => (
-          <span style={{ color: '#0ea5e9' }}>{info.getValue()}</span>
+          <span style={{ color: "#0ea5e9" }}>{info.getValue()}</span>
         ),
       }),
-      columnHelper.accessor('requiredLevel', {
-        header: 'Nível Requerido',
+      columnHelper.accessor("requiredLevel", {
+        header: "Nível Requerido",
         size: 150,
         cell: (info) => {
           const level = info.getValue();
           const levelNames: Record<number, string> = {
-            10: 'Auxiliar',
-            20: 'Técnico',
-            30: 'Gestor',
-            40: 'Gerente',
-            50: 'Admin',
+            10: "Auxiliar",
+            20: "Técnico",
+            30: "Gestor",
+            40: "Gerente",
+            50: "Admin",
           };
           return <span>{levelNames[level] || `Nível ${level}`}</span>;
         },
       }),
       columnHelper.display({
-        id: 'actions',
-        header: 'Ações',
+        id: "actions",
+        header: "Ações",
         size: 200,
         cell: (info) => {
           const database = info.row.original;
@@ -311,7 +325,7 @@ export function DatabasesPage() {
         },
       }),
     ],
-    [navigate, canAccess]
+    [navigate, canAccess],
   );
 
   const table = useReactTable({
@@ -343,7 +357,7 @@ export function DatabasesPage() {
           <ConditionalRender requiredLevel={30}>
             <Button
               variant="primary"
-              onClick={() => navigate('/databases/new')}
+              onClick={() => navigate("/databases/new")}
             >
               + Novo Banco
             </Button>
@@ -373,7 +387,7 @@ export function DatabasesPage() {
                             <SortIcon>
                               {flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                               {{
                                 asc: <FiChevronUp size={14} />,
@@ -398,7 +412,7 @@ export function DatabasesPage() {
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </td>
                       ))}
@@ -409,8 +423,9 @@ export function DatabasesPage() {
 
               <PaginationContainer>
                 <div>
-                  Página {table.getState().pagination.pageIndex + 1} de{' '}
-                  {table.getPageCount()} ({table.getRowModel().rows.length} registros nesta página)
+                  Página {table.getState().pagination.pageIndex + 1} de{" "}
+                  {table.getPageCount()} ({table.getRowModel().rows.length}{" "}
+                  registros nesta página)
                 </div>
                 <PaginationButtons>
                   <Button
@@ -450,4 +465,3 @@ export function DatabasesPage() {
     </motion.div>
   );
 }
-

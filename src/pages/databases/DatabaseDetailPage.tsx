@@ -1,209 +1,209 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { styled } from '@/assets/styles/themes/stitches.config';
-import { usePermission } from '@/hooks/usePermission';
-import apiClient from '@/services/api/client';
-import type { Database } from '@/types';
-import { FiArrowLeft, FiEdit2, FiTrash2, FiCopy } from 'react-icons/fi';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { styled } from "@/assets/styles/themes/stitches.config";
+import { usePermission } from "@/hooks/usePermission";
+import apiClient from "@/services/api/client";
+import type { Database } from "@/types";
+import { FiArrowLeft, FiEdit2, FiTrash2, FiCopy } from "react-icons/fi";
 
-const PageContainer = styled('div', {
-  padding: '$lg',
-  maxWidth: '900px',
-  margin: '0 auto',
+const PageContainer = styled("div", {
+  padding: "$lg",
+  maxWidth: "900px",
+  margin: "0 auto",
 });
 
-const Header = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '$2xl',
-  gap: '$lg',
+const Header = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "$2xl",
+  gap: "$lg",
 
-  '@xs': {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  "@xs": {
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
 });
 
-const TitleGroup = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$lg',
+const TitleGroup = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "$lg",
 });
 
-const BackButton = styled('button', {
-  backgroundColor: 'transparent',
-  border: 'none',
-  color: '$textPrimary',
-  cursor: 'pointer',
-  fontSize: '1.5rem',
-  padding: '$sm',
-  borderRadius: '$md',
-  transition: 'all $normal',
+const BackButton = styled("button", {
+  backgroundColor: "transparent",
+  border: "none",
+  color: "$textPrimary",
+  cursor: "pointer",
+  fontSize: "1.5rem",
+  padding: "$sm",
+  borderRadius: "$md",
+  transition: "all $normal",
 
-  '&:hover': {
-    backgroundColor: '$bgTertiary',
-    color: '$primaryColor',
+  "&:hover": {
+    backgroundColor: "$bgTertiary",
+    color: "$primaryColor",
   },
 });
 
-const Title = styled('h1', {
-  fontSize: '2rem',
+const Title = styled("h1", {
+  fontSize: "2rem",
   fontWeight: 700,
-  color: '$textPrimary',
+  color: "$textPrimary",
   margin: 0,
 });
 
-const ActionButtons = styled('div', {
-  display: 'flex',
-  gap: '$md',
+const ActionButtons = styled("div", {
+  display: "flex",
+  gap: "$md",
 
-  '@xs': {
-    width: '100%',
-    flexDirection: 'column',
+  "@xs": {
+    width: "100%",
+    flexDirection: "column",
   },
 });
 
-const Button = styled('button', {
-  padding: '$md $lg',
-  borderRadius: '$md',
-  fontSize: '$sm',
-  fontWeight: '$semibold',
-  border: 'none',
-  cursor: 'pointer',
-  transition: 'all $normal',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$sm',
+const Button = styled("button", {
+  padding: "$md $lg",
+  borderRadius: "$md",
+  fontSize: "$sm",
+  fontWeight: "$semibold",
+  border: "none",
+  cursor: "pointer",
+  transition: "all $normal",
+  display: "flex",
+  alignItems: "center",
+  gap: "$sm",
 
   variants: {
     variant: {
       primary: {
-        backgroundColor: '$primaryColor',
-        color: '$bgPrimary',
+        backgroundColor: "$primaryColor",
+        color: "$bgPrimary",
 
-        '&:hover': {
-          backgroundColor: '$borderAccent',
-          transform: 'translateY(-2px)',
+        "&:hover": {
+          backgroundColor: "$borderAccent",
+          transform: "translateY(-2px)",
         },
       },
       secondary: {
-        backgroundColor: '$bgTertiary',
-        color: '$textPrimary',
-        border: '1px solid $borderPrimary',
+        backgroundColor: "$bgTertiary",
+        color: "$textPrimary",
+        border: "1px solid $borderPrimary",
 
-        '&:hover': {
-          backgroundColor: '$borderPrimary',
+        "&:hover": {
+          backgroundColor: "$borderPrimary",
         },
       },
       danger: {
-        backgroundColor: '#ef4444',
-        color: '$bgPrimary',
+        backgroundColor: "#ef4444",
+        color: "$bgPrimary",
 
-        '&:hover': {
-          backgroundColor: '#dc2626',
-          transform: 'translateY(-2px)',
+        "&:hover": {
+          backgroundColor: "#dc2626",
+          transform: "translateY(-2px)",
         },
       },
     },
   },
 
-  '@xs': {
-    width: '100%',
-    justifyContent: 'center',
+  "@xs": {
+    width: "100%",
+    justifyContent: "center",
   },
 });
 
 const ContentCard = styled(motion.div, {
-  backgroundColor: '$bgSecondary',
-  border: '1px solid $borderPrimary',
-  borderRadius: '$lg',
-  padding: '$xl',
-  marginBottom: '$xl',
+  backgroundColor: "$bgSecondary",
+  border: "1px solid $borderPrimary",
+  borderRadius: "$lg",
+  padding: "$xl",
+  marginBottom: "$xl",
 });
 
-const InfoGrid = styled('div', {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '$xl',
-  marginBottom: '$xl',
+const InfoGrid = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: "$xl",
+  marginBottom: "$xl",
 
-  '@xs': {
-    gridTemplateColumns: '1fr',
+  "@xs": {
+    gridTemplateColumns: "1fr",
   },
 });
 
-const InfoItem = styled('div', {});
+const InfoItem = styled("div", {});
 
-const InfoLabel = styled('label', {
-  display: 'block',
-  fontSize: '$xs',
-  fontWeight: '$semibold',
-  color: '$textMuted',
-  textTransform: 'uppercase',
-  letterSpacing: '1px',
-  marginBottom: '$sm',
+const InfoLabel = styled("label", {
+  display: "block",
+  fontSize: "$xs",
+  fontWeight: "$semibold",
+  color: "$textMuted",
+  textTransform: "uppercase",
+  letterSpacing: "1px",
+  marginBottom: "$sm",
 });
 
-const InfoValue = styled('p', {
-  fontSize: '$sm',
-  color: '$textPrimary',
+const InfoValue = styled("p", {
+  fontSize: "$sm",
+  color: "$textPrimary",
   margin: 0,
-  padding: '$md',
-  backgroundColor: '$bgPrimary',
-  borderRadius: '$md',
-  border: '1px solid $borderPrimary',
-  wordBreak: 'break-all',
+  padding: "$md",
+  backgroundColor: "$bgPrimary",
+  borderRadius: "$md",
+  border: "1px solid $borderPrimary",
+  wordBreak: "break-all",
 });
 
-const CredentialsContainer = styled('div', {
-  position: 'relative',
+const CredentialsContainer = styled("div", {
+  position: "relative",
 });
 
-const CopyButton = styled('button', {
-  position: 'absolute',
-  top: '0.5rem',
-  right: '0.5rem',
-  backgroundColor: '$primaryColor',
-  border: 'none',
-  color: '$bgPrimary',
-  padding: '$xs $sm',
-  borderRadius: '$sm',
-  cursor: 'pointer',
-  transition: 'all $normal',
-  fontSize: '$sm',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$xs',
+const CopyButton = styled("button", {
+  position: "absolute",
+  top: "0.5rem",
+  right: "0.5rem",
+  backgroundColor: "$primaryColor",
+  border: "none",
+  color: "$bgPrimary",
+  padding: "$xs $sm",
+  borderRadius: "$sm",
+  cursor: "pointer",
+  transition: "all $normal",
+  fontSize: "$sm",
+  display: "flex",
+  alignItems: "center",
+  gap: "$xs",
 
-  '&:hover': {
-    backgroundColor: '$borderAccent',
+  "&:hover": {
+    backgroundColor: "$borderAccent",
   },
 });
 
-const NotesSection = styled('div', {
-  marginTop: '$xl',
-  paddingTop: '$xl',
-  borderTop: '1px solid $borderPrimary',
+const NotesSection = styled("div", {
+  marginTop: "$xl",
+  paddingTop: "$xl",
+  borderTop: "1px solid $borderPrimary",
 });
 
-const LoadingContainer = styled('div', {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: '400px',
-  color: '$textMuted',
+const LoadingContainer = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minHeight: "400px",
+  color: "$textMuted",
 });
 
 const getRoleLevelName = (level: number): string => {
   const levels: Record<number, string> = {
-    10: 'Auxiliar',
-    20: 'Técnico',
-    30: 'Gestor',
-    40: 'Gerente',
-    50: 'Administrador',
+    10: "Auxiliar",
+    20: "Técnico",
+    30: "Gestor",
+    40: "Gerente",
+    50: "Administrador",
   };
   return levels[level] || `Nível ${level}`;
 };
@@ -227,16 +227,18 @@ export const DatabaseDetailPage: React.FC = () => {
       const data = await apiClient.getDatabase(databaseId);
       setDatabase(data);
     } catch (error) {
-      console.error('Erro ao carregar banco de dados:', error);
-      toast.error('Erro ao carregar banco de dados');
-      navigate('/databases');
+      console.error("Erro ao carregar banco de dados:", error);
+      toast.error("Erro ao carregar banco de dados");
+      navigate("/databases");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Tem certeza que deseja deletar este banco de dados?')) {
+    if (
+      !window.confirm("Tem certeza que deseja deletar este banco de dados?")
+    ) {
       return;
     }
 
@@ -244,11 +246,13 @@ export const DatabaseDetailPage: React.FC = () => {
 
     try {
       await apiClient.deleteDatabase(id);
-      toast.success('Banco de dados deletado com sucesso');
-      navigate('/databases');
+      toast.success("Banco de dados deletado com sucesso");
+      navigate("/databases");
     } catch (error: any) {
-      console.error('Erro ao deletar:', error);
-      toast.error(error.response?.data?.message || 'Erro ao deletar banco de dados');
+      console.error("Erro ao deletar:", error);
+      toast.error(
+        error.response?.data?.message || "Erro ao deletar banco de dados",
+      );
     }
   };
 
@@ -278,7 +282,7 @@ export const DatabaseDetailPage: React.FC = () => {
     <PageContainer>
       <Header>
         <TitleGroup>
-          <BackButton onClick={() => navigate('/databases')}>
+          <BackButton onClick={() => navigate("/databases")}>
             <FiArrowLeft />
           </BackButton>
           <Title>{database.name}</Title>
@@ -327,7 +331,8 @@ export const DatabaseDetailPage: React.FC = () => {
           <InfoItem>
             <InfoLabel>Nível de Acesso Requerido</InfoLabel>
             <InfoValue>
-              {getRoleLevelName(database.requiredLevel)} ({database.requiredLevel})
+              {getRoleLevelName(database.requiredLevel)} (
+              {database.requiredLevel})
             </InfoValue>
           </InfoItem>
         </InfoGrid>
@@ -338,12 +343,12 @@ export const DatabaseDetailPage: React.FC = () => {
             <InfoValue>{database.credentialsEncrypted}</InfoValue>
             <CopyButton
               onClick={() =>
-                copyToClipboard(database.credentialsEncrypted, 'credentials')
+                copyToClipboard(database.credentialsEncrypted, "credentials")
               }
               title="Copiar credenciais"
             >
               <FiCopy size={14} />
-              {copiedField === 'credentials' ? 'Copiado!' : 'Copiar'}
+              {copiedField === "credentials" ? "Copiado!" : "Copiar"}
             </CopyButton>
           </CredentialsContainer>
         </InfoItem>
@@ -351,7 +356,7 @@ export const DatabaseDetailPage: React.FC = () => {
         {database.notes && (
           <NotesSection>
             <InfoLabel>Notas</InfoLabel>
-            <InfoValue style={{ minHeight: '100px' }}>
+            <InfoValue style={{ minHeight: "100px" }}>
               {database.notes}
             </InfoValue>
           </NotesSection>
