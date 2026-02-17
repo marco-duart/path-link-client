@@ -8,14 +8,19 @@ export const RoleLevel = {
 } as const;
 
 export const RoleNames = {
-  [RoleLevel.Auxiliar]: 'Auxiliar',
-  [RoleLevel.Técnico]: 'Técnico',
-  [RoleLevel.Gestor]: 'Gestor',
-  [RoleLevel.Gerente]: 'Gerente',
-  [RoleLevel.Administrador]: 'Administrador',
+  [RoleLevel.Auxiliar]: "Auxiliar",
+  [RoleLevel.Técnico]: "Técnico",
+  [RoleLevel.Gestor]: "Gestor",
+  [RoleLevel.Gerente]: "Gerente",
+  [RoleLevel.Administrador]: "Administrador",
 };
 
-export type RoleName = 'Auxiliar' | 'Técnico' | 'Gestor' | 'Gerente' | 'Administrador';
+export type RoleName =
+  | "Auxiliar"
+  | "Técnico"
+  | "Gestor"
+  | "Gerente"
+  | "Administrador";
 
 // Auth Types
 export interface User {
@@ -126,6 +131,10 @@ export interface StepRelationship {
   relatedModel: string;
   relatedId: string;
   step?: Step;
+  relatedObject?: {
+    name: string;
+    [key: string]: unknown;
+  };
 }
 
 export interface CreateStepRelationshipDTO {
@@ -159,7 +168,9 @@ export interface CreateUserDTO {
   teamId?: number;
 }
 
-export interface UpdateUserDTO extends Partial<Omit<CreateUserDTO, 'password'>> {}
+export interface UpdateUserDTO extends Partial<
+  Omit<CreateUserDTO, "password">
+> {}
 
 // Team Types
 export interface Team {
@@ -190,16 +201,29 @@ export interface CreateDepartmentDTO {
 
 export interface UpdateDepartmentDTO extends Partial<CreateDepartmentDTO> {}
 
-// Account Types (for step relationships)
+// Account Types
 export interface Account {
   id: string;
   name: string;
   type: string;
   username: string;
+  passwordEncrypted?: string;
   url?: string;
   notes?: string;
   requiredLevel: number;
 }
+
+export interface CreateAccountDTO {
+  name: string;
+  type: string;
+  username: string;
+  passwordEncrypted: string;
+  url?: string;
+  notes?: string;
+  requiredLevel: number;
+}
+
+export interface UpdateAccountDTO extends Partial<CreateAccountDTO> {}
 
 // Link Types
 export interface Link {
@@ -209,6 +233,35 @@ export interface Link {
   description?: string;
   requiredLevel?: number;
 }
+
+export interface CreateLinkDTO {
+  name: string;
+  url: string;
+  description?: string;
+  requiredLevel: number;
+}
+
+export interface UpdateLinkDTO extends Partial<CreateLinkDTO> {}
+
+// Configuration Item Types
+export interface ConfigurationItem {
+  id: string;
+  name: string;
+  type: string;
+  details: string;
+  notes?: string;
+  requiredLevel: number;
+}
+
+export interface CreateConfigurationItemDTO {
+  name: string;
+  type: string;
+  details: string;
+  notes?: string;
+  requiredLevel: number;
+}
+
+export interface UpdateConfigurationItemDTO extends Partial<CreateConfigurationItemDTO> {}
 
 // Repository Types
 export interface Repository {
@@ -253,6 +306,26 @@ export interface CreateDatabaseDTO {
 }
 
 export interface UpdateDatabaseDTO extends Partial<CreateDatabaseDTO> {}
+
+// Environment Variable Types
+export interface EnvironmentVariable {
+  id: string;
+  name: string;
+  valueEncrypted: string;
+  description?: string;
+  scope: string;
+  requiredLevel: number;
+}
+
+export interface CreateEnvironmentVariableDTO {
+  name: string;
+  value: string;
+  description?: string;
+  scope: string;
+  requiredLevel: number;
+}
+
+export interface UpdateEnvironmentVariableDTO extends Partial<CreateEnvironmentVariableDTO> {}
 
 // API Response Types
 export interface PaginatedResponse<T> {

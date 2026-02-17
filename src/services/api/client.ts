@@ -22,7 +22,6 @@ class ApiClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor - Adiciona token de autenticação
     this.client.interceptors.request.use(
       (config: CustomAxiosRequestConfig) => {
         const token = localStorage.getItem('access_token');
@@ -34,12 +33,10 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor - Trata erros de autenticação
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
         if (error.response?.status === 401) {
-          // Token expirado ou inválido - logout
           localStorage.removeItem('access_token');
           localStorage.removeItem('user');
           window.location.href = '/login';
@@ -118,7 +115,7 @@ class ApiClient {
 
   // ==================== STEPS ====================
   async getSteps(processId: string) {
-    const response = await this.client.get(`/steps?processId=${processId}`);
+    const response = await this.client.get(`/steps/process/${processId}`);
     return response.data;
   }
 
@@ -279,10 +276,48 @@ class ApiClient {
     return response.data;
   }
 
+  async getLink(id: string) {
+    const response = await this.client.get(`/links/${id}`);
+    return response.data;
+  }
+
+  async createLink(data: any) {
+    const response = await this.client.post('/links', data);
+    return response.data;
+  }
+
+  async updateLink(id: string, data: any) {
+    const response = await this.client.patch(`/links/${id}`, data);
+    return response.data;
+  }
+
+  async deleteLink(id: string) {
+    await this.client.delete(`/links/${id}`);
+  }
+
   // ==================== CONFIGURATION ITEMS ====================
   async getConfigurationItems() {
     const response = await this.client.get('/configuration-items');
     return response.data;
+  }
+
+  async getConfigurationItem(id: string) {
+    const response = await this.client.get(`/configuration-items/${id}`);
+    return response.data;
+  }
+
+  async createConfigurationItem(data: any) {
+    const response = await this.client.post('/configuration-items', data);
+    return response.data;
+  }
+
+  async updateConfigurationItem(id: string, data: any) {
+    const response = await this.client.patch(`/configuration-items/${id}`, data);
+    return response.data;
+  }
+
+  async deleteConfigurationItem(id: string) {
+    await this.client.delete(`/configuration-items/${id}`);
   }
 
   // ==================== ENVIRONMENT VARIABLES ====================
@@ -291,9 +326,53 @@ class ApiClient {
     return response.data;
   }
 
+  async getEnvironmentVariable(id: string) {
+    const response = await this.client.get(`/environment-variables/${id}`);
+    return response.data;
+  }
+
+  async createEnvironmentVariable(data: any) {
+    const response = await this.client.post('/environment-variables', data);
+    return response.data;
+  }
+
+  async updateEnvironmentVariable(id: string, data: any) {
+    const response = await this.client.patch(`/environment-variables/${id}`, data);
+    return response.data;
+  }
+
+  async deleteEnvironmentVariable(id: string) {
+    await this.client.delete(`/environment-variables/${id}`);
+  }
+
+  // ==================== ACCOUNTS ====================
+  async getAccounts() {
+    const response = await this.client.get('/accounts');
+    return response.data;
+  }
+
+  async getAccount(id: string) {
+    const response = await this.client.get(`/accounts/${id}`);
+    return response.data;
+  }
+
+  async createAccount(data: any) {
+    const response = await this.client.post('/accounts', data);
+    return response.data;
+  }
+
+  async updateAccount(id: string, data: any) {
+    const response = await this.client.patch(`/accounts/${id}`, data);
+    return response.data;
+  }
+
+  async deleteAccount(id: string) {
+    await this.client.delete(`/accounts/${id}`);
+  }
+
   // ==================== GENERIC ====================
   async request<T>(
-    method: 'get' | 'post' | 'patch' | 'delete',
+    method: 'get' | 'post' | 'put' | 'patch' | 'delete',
     url: string,
     data?: any
   ): Promise<T> {
