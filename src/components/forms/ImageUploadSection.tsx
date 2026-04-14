@@ -200,6 +200,12 @@ interface ImageUploadSectionProps {
   onImagesLoaded: (images: UploadedImage[]) => void;
   maxFiles?: number;
   onCropModalStateChange?: (isOpen: boolean) => void;
+  title?: string;
+  mainText?: string;
+  subText?: string;
+  cropHintText?: string;
+  cropAspectRatio?: number;
+  showCaptionInput?: boolean;
 }
 
 interface ImageToCrop {
@@ -211,6 +217,12 @@ export function ImageUploadSection({
   onImagesLoaded,
   maxFiles = 5,
   onCropModalStateChange,
+  title = "Imagens do Passo",
+  mainText = "Arraste as imagens aqui ou clique",
+  subText,
+  cropHintText = "⚠️ Você precisará fazer crop em proporção 4:3 para cada imagem",
+  cropAspectRatio = 4 / 3,
+  showCaptionInput = true,
 }: ImageUploadSectionProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -381,7 +393,7 @@ export function ImageUploadSection({
       <SectionContainer>
         <SectionTitle>
           <FiImage size={18} />
-          Imagens do Passo
+          {title}
         </SectionTitle>
 
         <DropZoneContainer
@@ -398,25 +410,27 @@ export function ImageUploadSection({
               <FiUpload size={40} />
             </UploadIcon>
             <DropZoneText>
-              <MainText>Arraste as imagens aqui ou clique</MainText>
+              <MainText>{mainText}</MainText>
               <SubText>
-                PNG, JPG, GIF até 10MB. Máximo {maxFiles} imagens.
+                {subText || `PNG, JPG, GIF até 10MB. Máximo ${maxFiles} imagens.`}
               </SubText>
-              <SubText
-                style={{
-                  color: "var(--colors-primaryColor)",
-                  fontWeight: "bold",
-                  marginTop: "8px",
-                }}
-              >
-                ⚠️ Você precisará fazer crop em proporção 4:3 para cada imagem
-              </SubText>
+              {cropHintText && (
+                <SubText
+                  style={{
+                    color: "var(--colors-primaryColor)",
+                    fontWeight: "bold",
+                    marginTop: "8px",
+                  }}
+                >
+                  {cropHintText}
+                </SubText>
+              )}
             </DropZoneText>
           </DropZone>
           <HiddenInput
             ref={inputRef}
             type="file"
-            multiple
+            multiple={maxFiles > 1}
             accept="image/*"
             onChange={handleInputChange}
           />
@@ -460,14 +474,16 @@ export function ImageUploadSection({
                         </NoImagePlaceholder>
                       )}
                     </PreviewItem>
-                    <CaptionInput
-                      type="text"
-                      placeholder="Legenda (opcional)"
-                      value={image.caption || ""}
-                      onChange={(e) =>
-                        handleCaptionChange(image.id, e.target.value)
-                      }
-                    />
+                    {showCaptionInput && (
+                      <CaptionInput
+                        type="text"
+                        placeholder="Legenda (opcional)"
+                        value={image.caption || ""}
+                        onChange={(e) =>
+                          handleCaptionChange(image.id, e.target.value)
+                        }
+                      />
+                    )}
                   </PreviewItemWrapper>
                 ))}
               </PreviewContainer>
@@ -483,7 +499,7 @@ export function ImageUploadSection({
             imageFile={imageToCrop.file}
             onCropComplete={handleCropComplete}
             onCancel={() => handleSetImageToCrop(null)}
-            aspectRatio={4 / 3}
+            aspectRatio={cropAspectRatio}
           />
         )}
       </AnimatePresence>

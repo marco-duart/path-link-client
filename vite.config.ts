@@ -13,7 +13,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/uploads': {
-        target: 'http://localhost:3000',
+        // target: 'http://localhost:3000',
+        target: 'http://10.77.77.69:3005',
         changeOrigin: true,
       },
     },

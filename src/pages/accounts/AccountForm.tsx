@@ -8,7 +8,11 @@ import { motion } from "framer-motion";
 import { styled } from "@/assets/styles/themes/stitches.config";
 import apiClient from "@/services/api/client";
 import type { CreateAccountDTO, UpdateAccountDTO } from "@/types";
-import { FiArrowLeft, FiSave, FiLoader, FiUpload, FiTrash2 } from "react-icons/fi";
+import {
+  ImageUploadSection,
+  type UploadedImage,
+} from "@/components/forms/ImageUploadSection";
+import { FiArrowLeft, FiSave, FiLoader, FiTrash2 } from "react-icons/fi";
 
 const PageContainer = styled("div", {
   padding: "$lg",
@@ -215,26 +219,6 @@ const SectionTitle = styled("h2", {
   letterSpacing: "0.5px",
 });
 
-const UploadContainer = styled("div", {
-  border: "1px dashed $borderPrimary",
-  borderRadius: "$md",
-  backgroundColor: "$bgPrimary",
-  padding: "$lg",
-});
-
-const UploadHint = styled("p", {
-  fontSize: "$xs",
-  color: "$textSecondary",
-  margin: "$sm 0 0",
-});
-
-const UploadActions = styled("div", {
-  display: "flex",
-  gap: "$sm",
-  marginTop: "$md",
-  flexWrap: "wrap",
-});
-
 const SecondaryButton = styled("button", {
   display: "inline-flex",
   alignItems: "center",
@@ -263,6 +247,13 @@ const QrPreview = styled("img", {
   borderRadius: "$sm",
   border: "1px solid $borderPrimary",
   backgroundColor: "$bgSecondary",
+  marginTop: "$md",
+});
+
+const UploadNote = styled("p", {
+  fontSize: "$xs",
+  color: "$textSecondary",
+  marginTop: "$sm",
 });
 
 const schemaCreate = z.object({
@@ -292,7 +283,8 @@ export function AccountForm({ isEditing = false }: FormProps) {
   const [loading, setLoading] = useState(Boolean(isEditing && id));
   const [submitting, setSubmitting] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [qrFile, setQrFile] = useState<File | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
   const [qrPreviewUrl, setQrPreviewUrl] = useState<string | null>(null);
   const [existingQrAssetId, setExistingQrAssetId] = useState<string | null>(
     null,
@@ -346,27 +338,8 @@ export function AccountForm({ isEditing = false }: FormProps) {
     setQrPreviewUrl(null);
   };
 
-  const handleQrInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Selecione um arquivo de imagem para o QR Code");
-      return;
-    }
-
-    clearQrPreview();
-    setQrFile(file);
-    setQrPreviewUrl(URL.createObjectURL(file));
-    setShouldRemoveExistingQr(false);
-  };
-
   const handleRemoveQr = () => {
     clearQrPreview();
-    setQrFile(null);
 
     if (existingQrAssetId) {
       setShouldRemoveExistingQr(true);
@@ -412,6 +385,7 @@ export function AccountForm({ isEditing = false }: FormProps) {
 
   const onSubmit = async (data: FormData) => {
     let uploadedQrAssetId: string | null = null;
+    const qrFile = uploadedImages[0]?.file;
 
     try {
       setSubmitting(true);
@@ -605,44 +579,41 @@ export function AccountForm({ isEditing = false }: FormProps) {
 
               <FormGroup>
                 <Label>QR Code (2FA)</Label>
-                <UploadContainer>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleQrInputChange}
-                    disabled={submitting}
-                  />
-                  <UploadHint>
-                    Faça upload da imagem do QR Code para autenticação em dois
-                    fatores.
-                  </UploadHint>
+                <ImageUploadSection
+                  onImagesLoaded={(images) => {
+                    setUploadedImages(images);
+                    if (images.length > 0) {
+                      setShouldRemoveExistingQr(false);
+                    }
+                  }}
+                  maxFiles={1}
+                  title="QR Code (2FA)"
+                  mainText="Arraste o QR Code aqui ou clique"
+                  subText="PNG, JPG, GIF até 10MB. Máximo 1 imagem."
+                  cropHintText="Ajuste o recorte antes de salvar a conta."
+                  cropAspectRatio={1}
+                  showCaptionInput={false}
+                  onCropModalStateChange={setIsCropModalOpen}
+                />
+                <UploadNote>
+                  O arquivo é enviado ao salvar a conta.
+                </UploadNote>
 
-                  {qrPreviewUrl && (
-                    <UploadActions>
-                      <QrPreview src={qrPreviewUrl} alt="QR Code 2FA" />
-                    </UploadActions>
-                  )}
-
-                  {(qrPreviewUrl || existingQrAssetId) && (
-                    <UploadActions>
+                {qrPreviewUrl && uploadedImages.length === 0 && (
+                  <>
+                    <QrPreview src={qrPreviewUrl} alt="QR Code 2FA atual" />
+                    <div>
                       <SecondaryButton
                         type="button"
                         onClick={handleRemoveQr}
                         disabled={submitting}
                       >
                         <FiTrash2 size={14} />
-                        Remover QR Code
+                        Remover QR Code atual
                       </SecondaryButton>
-                    </UploadActions>
-                  )}
-
-                  <UploadActions>
-                    <SecondaryButton type="button" disabled>
-                      <FiUpload size={14} />
-                      O arquivo é enviado ao salvar a conta
-                    </SecondaryButton>
-                  </UploadActions>
-                </UploadContainer>
+                    </div>
+                  </>
+                )}
               </FormGroup>
             </FormSection>
 
@@ -665,7 +636,7 @@ export function AccountForm({ isEditing = false }: FormProps) {
               </FormGroup>
             </FormSection>
 
-            <SubmitButton type="submit" disabled={submitting}>
+            <SubmitButton type="submit" disabled={submitting || isCropModalOpen}>
               {submitting ? (
                 <>
                   <FiLoader
