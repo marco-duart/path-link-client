@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { styled } from "@/assets/styles/themes/stitches.config";
 import apiClient from "@/services/api/client";
 import type { CreateAccountDTO, UpdateAccountDTO } from "@/types";
-import { FiArrowLeft, FiSave, FiLoader } from "react-icons/fi";
+import { FiArrowLeft, FiSave, FiLoader, FiUpload, FiTrash2 } from "react-icons/fi";
 
 const PageContainer = styled("div", {
   padding: "$lg",
@@ -215,6 +215,56 @@ const SectionTitle = styled("h2", {
   letterSpacing: "0.5px",
 });
 
+const UploadContainer = styled("div", {
+  border: "1px dashed $borderPrimary",
+  borderRadius: "$md",
+  backgroundColor: "$bgPrimary",
+  padding: "$lg",
+});
+
+const UploadHint = styled("p", {
+  fontSize: "$xs",
+  color: "$textSecondary",
+  margin: "$sm 0 0",
+});
+
+const UploadActions = styled("div", {
+  display: "flex",
+  gap: "$sm",
+  marginTop: "$md",
+  flexWrap: "wrap",
+});
+
+const SecondaryButton = styled("button", {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "$xs",
+  padding: "$sm $md",
+  borderRadius: "$sm",
+  border: "1px solid $borderPrimary",
+  backgroundColor: "$bgSecondary",
+  color: "$textPrimary",
+  cursor: "pointer",
+  fontSize: "$xs",
+
+  "&:hover": {
+    borderColor: "$primaryColor",
+  },
+
+  "&:disabled": {
+    opacity: 0.5,
+    cursor: "not-allowed",
+  },
+});
+
+const QrPreview = styled("img", {
+  width: "220px",
+  maxWidth: "100%",
+  borderRadius: "$sm",
+  border: "1px solid $borderPrimary",
+  backgroundColor: "$bgSecondary",
+});
+
 const schemaCreate = z.object({
   name: z
     .string()
@@ -242,6 +292,13 @@ export function AccountForm({ isEditing = false }: FormProps) {
   const [loading, setLoading] = useState(Boolean(isEditing && id));
   const [submitting, setSubmitting] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [qrFile, setQrFile] = useState<File | null>(null);
+  const [qrPreviewUrl, setQrPreviewUrl] = useState<string | null>(null);
+  const [existingQrAssetId, setExistingQrAssetId] = useState<string | null>(
+    null,
+  );
+  const [shouldRemoveExistingQr, setShouldRemoveExistingQr] =
+    useState(false);
 
   const schema = isEditing ? schemaUpdate : schemaCreate;
 
@@ -269,6 +326,53 @@ export function AccountForm({ isEditing = false }: FormProps) {
     }
   }, [id, isEditing]);
 
+  useEffect(() => {
+    return () => {
+      if (qrPreviewUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(qrPreviewUrl);
+      }
+    };
+  }, [qrPreviewUrl]);
+
+  const resolveAssetUrl = (assetUrl?: string) => {
+    if (!assetUrl) return null;
+    return assetUrl.startsWith("/uploads") ? assetUrl : `/uploads/${assetUrl}`;
+  };
+
+  const clearQrPreview = () => {
+    if (qrPreviewUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(qrPreviewUrl);
+    }
+    setQrPreviewUrl(null);
+  };
+
+  const handleQrInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem para o QR Code");
+      return;
+    }
+
+    clearQrPreview();
+    setQrFile(file);
+    setQrPreviewUrl(URL.createObjectURL(file));
+    setShouldRemoveExistingQr(false);
+  };
+
+  const handleRemoveQr = () => {
+    clearQrPreview();
+    setQrFile(null);
+
+    if (existingQrAssetId) {
+      setShouldRemoveExistingQr(true);
+    }
+  };
+
   const loadAccount = async () => {
     if (!id) return;
 
@@ -285,6 +389,16 @@ export function AccountForm({ isEditing = false }: FormProps) {
         notes: data.notes || "",
         requiredLevel: data.requiredLevel,
       });
+
+      const currentQrAsset = data.twoFactorQrAsset;
+      if (currentQrAsset?.id) {
+        setExistingQrAssetId(currentQrAsset.id);
+        setQrPreviewUrl(resolveAssetUrl(currentQrAsset.url));
+        setShouldRemoveExistingQr(false);
+      } else {
+        setExistingQrAssetId(null);
+        clearQrPreview();
+      }
     } catch (error: any) {
       console.error("Erro ao carregar conta:", error);
       const errorMsg =
@@ -297,21 +411,58 @@ export function AccountForm({ isEditing = false }: FormProps) {
   };
 
   const onSubmit = async (data: FormData) => {
+    let uploadedQrAssetId: string | null = null;
+
     try {
       setSubmitting(true);
 
+      if (qrFile) {
+        const uploadedAsset = await apiClient.uploadAsset(qrFile, {
+          requiredLevel: data.requiredLevel,
+        });
+        uploadedQrAssetId = uploadedAsset.id;
+      }
+
+      const payloadQrAssetId =
+        uploadedQrAssetId !== null
+          ? uploadedQrAssetId
+          : shouldRemoveExistingQr
+            ? null
+            : undefined;
+
       if (isEditing && id) {
-        const updateData: UpdateAccountDTO = data;
+        const updateData: UpdateAccountDTO = {
+          ...data,
+          ...(payloadQrAssetId !== undefined
+            ? { twoFactorQrAssetId: payloadQrAssetId }
+            : {}),
+        };
         await apiClient.updateAccount(id, updateData);
+
+        if ((uploadedQrAssetId || shouldRemoveExistingQr) && existingQrAssetId) {
+          await apiClient.deleteAsset(existingQrAssetId).catch(() => {
+            toast.error(
+              "Conta salva, mas não foi possível remover o QR Code antigo",
+            );
+          });
+        }
+
         toast.success("Conta atualizada com sucesso");
       } else {
-        const createData: CreateAccountDTO = data;
+        const createData: CreateAccountDTO = {
+          ...data,
+          ...(uploadedQrAssetId ? { twoFactorQrAssetId: uploadedQrAssetId } : {}),
+        };
         await apiClient.createAccount(createData);
         toast.success("Conta criada com sucesso");
       }
 
       navigate("/accounts");
     } catch (error: any) {
+      if (uploadedQrAssetId) {
+        await apiClient.deleteAsset(uploadedQrAssetId).catch(() => null);
+      }
+
       console.error("Erro ao salvar:", error);
       const errorMsg = error.response?.data?.message || "Erro ao salvar conta";
       toast.error(errorMsg);
@@ -450,6 +601,48 @@ export function AccountForm({ isEditing = false }: FormProps) {
                 {errors.passwordEncrypted && (
                   <Error>{errors.passwordEncrypted.message}</Error>
                 )}
+              </FormGroup>
+
+              <FormGroup>
+                <Label>QR Code (2FA)</Label>
+                <UploadContainer>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleQrInputChange}
+                    disabled={submitting}
+                  />
+                  <UploadHint>
+                    Faça upload da imagem do QR Code para autenticação em dois
+                    fatores.
+                  </UploadHint>
+
+                  {qrPreviewUrl && (
+                    <UploadActions>
+                      <QrPreview src={qrPreviewUrl} alt="QR Code 2FA" />
+                    </UploadActions>
+                  )}
+
+                  {(qrPreviewUrl || existingQrAssetId) && (
+                    <UploadActions>
+                      <SecondaryButton
+                        type="button"
+                        onClick={handleRemoveQr}
+                        disabled={submitting}
+                      >
+                        <FiTrash2 size={14} />
+                        Remover QR Code
+                      </SecondaryButton>
+                    </UploadActions>
+                  )}
+
+                  <UploadActions>
+                    <SecondaryButton type="button" disabled>
+                      <FiUpload size={14} />
+                      O arquivo é enviado ao salvar a conta
+                    </SecondaryButton>
+                  </UploadActions>
+                </UploadContainer>
               </FormGroup>
             </FormSection>
 
