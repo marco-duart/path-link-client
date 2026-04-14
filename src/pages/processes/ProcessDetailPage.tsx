@@ -7,6 +7,7 @@ import { ConditionalRender } from "@/components/ConditionalRender";
 import { usePermission } from "@/hooks/usePermission";
 import apiClient from "@/services/api/client";
 import type { Process, Step } from "@/types";
+import { resolveUploadUrl } from "@/utils/assetUrl";
 import {
   FiArrowLeft,
   FiEdit2,
@@ -762,13 +763,12 @@ export function ProcessDetailPage() {
                                             asset.assetFilePath ||
                                             asset.filename;
 
-                                          return imageUrl && imageUrl.trim() ? (
+                                          const resolvedImageUrl =
+                                            resolveUploadUrl(imageUrl);
+
+                                          return resolvedImageUrl ? (
                                             <img
-                                              src={
-                                                imageUrl.startsWith("/uploads")
-                                                  ? imageUrl
-                                                  : `/uploads/${imageUrl}`
-                                              }
+                                              src={resolvedImageUrl}
                                               alt={
                                                 stepAsset.caption ||
                                                 "Imagem do passo"
@@ -840,16 +840,13 @@ export function ProcessDetailPage() {
                                                         : undefined,
                                                     }}
                                                   >
-                                                    {imageUrl &&
-                                                    imageUrl.trim() ? (
+                                                    {resolveUploadUrl(
+                                                      imageUrl,
+                                                    ) ? (
                                                       <img
-                                                        src={
-                                                          imageUrl.startsWith(
-                                                            "/uploads",
-                                                          )
-                                                            ? imageUrl
-                                                            : `/uploads/${imageUrl}`
-                                                        }
+                                                        src={resolveUploadUrl(
+                                                          imageUrl,
+                                                        ) || undefined}
                                                         alt={
                                                           stepAsset.caption ||
                                                           "Imagem"

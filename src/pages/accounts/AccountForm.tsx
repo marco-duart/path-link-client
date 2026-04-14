@@ -12,6 +12,7 @@ import {
   ImageUploadSection,
   type UploadedImage,
 } from "@/components/forms/ImageUploadSection";
+import { resolveUploadUrl } from "@/utils/assetUrl";
 import { FiArrowLeft, FiSave, FiLoader, FiTrash2 } from "react-icons/fi";
 
 const PageContainer = styled("div", {
@@ -326,10 +327,7 @@ export function AccountForm({ isEditing = false }: FormProps) {
     };
   }, [qrPreviewUrl]);
 
-  const resolveAssetUrl = (assetUrl?: string) => {
-    if (!assetUrl) return null;
-    return assetUrl.startsWith("/uploads") ? assetUrl : `/uploads/${assetUrl}`;
-  };
+  const resolveAssetUrl = (assetUrl?: string) => resolveUploadUrl(assetUrl);
 
   const clearQrPreview = () => {
     if (qrPreviewUrl?.startsWith("blob:")) {

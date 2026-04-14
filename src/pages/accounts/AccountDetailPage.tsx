@@ -6,6 +6,7 @@ import { styled } from "@/assets/styles/themes/stitches.config";
 import { ConditionalRender } from "@/components/ConditionalRender";
 import apiClient from "@/services/api/client";
 import type { Account } from "@/types";
+import { resolveUploadUrl } from "@/utils/assetUrl";
 import {
   FiArrowLeft,
   FiEdit2,
@@ -279,11 +280,7 @@ export function AccountDetailPage() {
     return levelNames[level] || `Nível ${level}`;
   };
 
-  const qrCodeUrl = account.twoFactorQrAsset?.url
-    ? account.twoFactorQrAsset.url.startsWith("/uploads")
-      ? account.twoFactorQrAsset.url
-      : `/uploads/${account.twoFactorQrAsset.url}`
-    : null;
+  const qrCodeUrl = resolveUploadUrl(account.twoFactorQrAsset?.url);
 
   return (
     <motion.div
