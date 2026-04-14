@@ -210,6 +210,7 @@ export interface Account {
   passwordEncrypted?: string;
   url?: string;
   notes?: string;
+  twoFactorQrAsset?: Asset | null;
   requiredLevel: number;
 }
 
@@ -220,6 +221,7 @@ export interface CreateAccountDTO {
   passwordEncrypted: string;
   url?: string;
   notes?: string;
+  twoFactorQrAssetId?: string | null;
   requiredLevel: number;
 }
 
