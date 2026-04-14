@@ -187,6 +187,14 @@ const ErrorContainer = styled("div", {
   color: "$bgPrimary",
 });
 
+const QrCodeImage = styled("img", {
+  width: "100%",
+  borderRadius: "$md",
+  border: "1px solid $borderPrimary",
+  backgroundColor: "$bgPrimary",
+  padding: "$sm",
+});
+
 export function AccountDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -271,6 +279,12 @@ export function AccountDetailPage() {
     return levelNames[level] || `Nível ${level}`;
   };
 
+  const qrCodeUrl = account.twoFactorQrAsset?.url
+    ? account.twoFactorQrAsset.url.startsWith("/uploads")
+      ? account.twoFactorQrAsset.url
+      : `/uploads/${account.twoFactorQrAsset.url}`
+    : null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -338,36 +352,45 @@ export function AccountDetailPage() {
             )}
           </Section>
 
-          {account.passwordEncrypted && (
+          {(account.passwordEncrypted || qrCodeUrl) && (
             <Section>
               <SectionTitle>Segurança</SectionTitle>
-              <Field>
-                <Label>Senha</Label>
-                <ValueContainer>
-                  <Value
-                    style={{
-                      flex: 1,
-                    }}
-                  >
-                    {showPassword ? account.passwordEncrypted : "••••••••••"}
-                  </Value>
-                  <ToggleValueButton
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <>
-                        <FiEyeOff size={16} />
-                        Ocultar
-                      </>
-                    ) : (
-                      <>
-                        <FiEye size={16} />
-                        Mostrar
-                      </>
-                    )}
-                  </ToggleValueButton>
-                </ValueContainer>
-              </Field>
+              {account.passwordEncrypted && (
+                <Field>
+                  <Label>Senha</Label>
+                  <ValueContainer>
+                    <Value
+                      style={{
+                        flex: 1,
+                      }}
+                    >
+                      {showPassword ? account.passwordEncrypted : "••••••••••"}
+                    </Value>
+                    <ToggleValueButton
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <>
+                          <FiEyeOff size={16} />
+                          Ocultar
+                        </>
+                      ) : (
+                        <>
+                          <FiEye size={16} />
+                          Mostrar
+                        </>
+                      )}
+                    </ToggleValueButton>
+                  </ValueContainer>
+                </Field>
+              )}
+
+              {qrCodeUrl && (
+                <Field>
+                  <Label>QR Code 2FA</Label>
+                  <QrCodeImage src={qrCodeUrl} alt="QR Code 2FA" />
+                </Field>
+              )}
             </Section>
           )}
 
