@@ -199,7 +199,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: <FiLink2 size={18} />,
     },
     {
-      label: "Recursos",
+      label: "Presets",
       path: "/configuration-items",
       icon: <FiPackage size={18} />,
     },
