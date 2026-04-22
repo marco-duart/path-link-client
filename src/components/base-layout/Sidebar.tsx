@@ -6,6 +6,7 @@ import { usePermission } from "../../hooks/usePermission";
 import { ConditionalRender } from "../ConditionalRender";
 import {
   FiHome,
+  FiActivity,
   FiBook,
   FiDatabase,
   FiSettings,
@@ -163,6 +164,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: "Home",
       path: "/",
       icon: <FiHome size={18} />,
+    },
+    {
+      label: "Health Check",
+      path: "/health-check",
+      icon: <FiActivity size={18} />,
     },
     {
       label: "Processos",
