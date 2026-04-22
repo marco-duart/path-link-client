@@ -16,6 +16,7 @@ import { LinksPage, LinkDetailPage, LinkForm } from '../pages/links';
 import { ConfigurationItemsPage, ConfigurationItemDetailPage, ConfigurationItemForm } from '../pages/configuration-items';
 import { EnvironmentVariablesPage, EnvironmentVariableDetailPage, EnvironmentVariableForm } from '../pages/environment-variables';
 import { AccountsPage, AccountDetailPage, AccountForm } from '../pages/accounts';
+import { HealthCheckPage } from '../pages/health-check';
 import { UsersPage, UserDetailPage, UserForm, SettingsPage } from '../pages/admin';
 
 const LoadingPage = () => (
@@ -91,6 +92,8 @@ export const AppRoutes = () => {
           }
         >
           <Route index element={<HomePage />} />
+
+          <Route path="/health-check" element={<HealthCheckPage />} />
 
           <Route path="/processes" element={<ProcessesPage />} />
           <Route path="/processes/new" element={<ProtectedRoute requiredLevel={30}><CreateProcessPage /></ProtectedRoute>} />
