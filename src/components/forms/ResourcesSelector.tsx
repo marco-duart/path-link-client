@@ -3,10 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { styled } from "@/assets/styles/themes/stitches.config";
 import toast from "react-hot-toast";
 import apiClient from "@/services/api/client";
+import { usePermission } from "@/hooks/usePermission";
 import {
+  FiCode,
+  FiDatabase,
   FiLink,
   FiKey,
   FiSettings,
+  FiUser,
+  FiGitBranch,
   FiChevronDown,
   FiChevronUp,
   FiCheck,
@@ -246,7 +251,8 @@ export interface SelectedResource {
     | "ConfigurationItem"
     | "Account"
     | "Database"
-    | "Repository";
+    | "Repository"
+    | "Software";
 }
 
 interface ResourcesSelectorProps {
@@ -258,8 +264,15 @@ export function ResourcesSelector({
   onResourcesSelected,
   selectedResources = [],
 }: ResourcesSelectorProps) {
+  const { canAccessFeature } = usePermission();
   const [activeTab, setActiveTab] = useState<
-    "links" | "envvars" | "config" | "accounts" | "databases" | "repositories"
+    | "links"
+    | "envvars"
+    | "config"
+    | "accounts"
+    | "databases"
+    | "repositories"
+    | "softwares"
   >("links");
   const [isExpanded, setIsExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -270,6 +283,7 @@ export function ResourcesSelector({
   const [accounts, setAccounts] = useState<Resource[]>([]);
   const [databases, setDatabases] = useState<Resource[]>([]);
   const [repositories, setRepositories] = useState<Resource[]>([]);
+  const [softwares, setSoftwares] = useState<Resource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const selectedIds = new Set(selectedResources.map((r) => r.id));
@@ -288,13 +302,19 @@ export function ResourcesSelector({
         accountsData,
         databasesData,
         repositoriesData,
+        softwaresData,
       ] = await Promise.all([
         apiClient.getLinks(),
-        apiClient.getEnvironmentVariables(),
+        canAccessFeature("environmentVariables")
+          ? apiClient.getEnvironmentVariables()
+          : Promise.resolve([]),
         apiClient.getConfigurationItems(),
         apiClient.getAccounts(),
         apiClient.getDatabases(),
-        apiClient.getRepositories(),
+        canAccessFeature("repositories")
+          ? apiClient.getRepositories()
+          : Promise.resolve([]),
+        apiClient.getSoftwares(),
       ]);
 
       setLinks(
@@ -356,6 +376,17 @@ export function ResourcesSelector({
             }))
           : [],
       );
+
+      setSoftwares(
+        Array.isArray(softwaresData)
+          ? softwaresData.map((software: any) => ({
+              id: software.id,
+              name: software.name,
+              description:
+                software.version || software.description?.substring(0, 50),
+            }))
+          : [],
+      );
     } catch (error) {
       console.error("Erro ao carregar recursos:", error);
       toast.error("Erro ao carregar recursos");
@@ -381,7 +412,8 @@ export function ResourcesSelector({
       | "ConfigurationItem"
       | "Account"
       | "Database"
-      | "Repository",
+      | "Repository"
+      | "Software",
     name: string,
   ) => {
     const newSelected = selectedResources.filter(
@@ -406,6 +438,58 @@ export function ResourcesSelector({
   const filteredAccounts = filterResources(accounts);
   const filteredDatabases = filterResources(databases);
   const filteredRepositories = filterResources(repositories);
+  const filteredSoftwares = filterResources(softwares);
+
+  const visibleTabs = [
+    {
+      key: "links" as const,
+      label: `Links (${links.length})`,
+      icon: <FiLink size={16} />,
+      visible: true,
+    },
+    {
+      key: "envvars" as const,
+      label: `Variáveis (${envVars.length})`,
+      icon: <FiKey size={16} />,
+      visible: canAccessFeature("environmentVariables"),
+    },
+    {
+      key: "config" as const,
+      label: `Config (${configItems.length})`,
+      icon: <FiSettings size={16} />,
+      visible: true,
+    },
+    {
+      key: "accounts" as const,
+      label: `Contas (${accounts.length})`,
+      icon: <FiUser size={16} />,
+      visible: true,
+    },
+    {
+      key: "databases" as const,
+      label: `BDs (${databases.length})`,
+      icon: <FiDatabase size={16} />,
+      visible: true,
+    },
+    {
+      key: "softwares" as const,
+      label: `Softwares (${softwares.length})`,
+      icon: <FiCode size={16} />,
+      visible: true,
+    },
+    {
+      key: "repositories" as const,
+      label: `Repos (${repositories.length})`,
+      icon: <FiGitBranch size={16} />,
+      visible: canAccessFeature("repositories"),
+    },
+  ].filter((tab) => tab.visible);
+
+  useEffect(() => {
+    if (!visibleTabs.some((tab) => tab.key === activeTab)) {
+      setActiveTab(visibleTabs[0]?.key || "links");
+    }
+  }, [activeTab, visibleTabs]);
 
   return (
     <SectionContainer>
@@ -440,51 +524,17 @@ export function ResourcesSelector({
               />
 
               <TabsContainer>
-                <Tab
-                  type="button"
-                  active={activeTab === "links"}
-                  onClick={() => setActiveTab("links")}
-                >
-                  <FiLink size={16} />
-                  Links ({links.length})
-                </Tab>
-                <Tab
-                  type="button"
-                  active={activeTab === "envvars"}
-                  onClick={() => setActiveTab("envvars")}
-                >
-                  <FiKey size={16} />
-                  Variáveis ({envVars.length})
-                </Tab>
-                <Tab
-                  type="button"
-                  active={activeTab === "config"}
-                  onClick={() => setActiveTab("config")}
-                >
-                  <FiSettings size={16} />
-                  Config ({configItems.length})
-                </Tab>
-                <Tab
-                  type="button"
-                  active={activeTab === "accounts"}
-                  onClick={() => setActiveTab("accounts")}
-                >
-                  👤 Contas ({accounts.length})
-                </Tab>
-                <Tab
-                  type="button"
-                  active={activeTab === "databases"}
-                  onClick={() => setActiveTab("databases")}
-                >
-                  🗄️ BDs ({databases.length})
-                </Tab>
-                <Tab
-                  type="button"
-                  active={activeTab === "repositories"}
-                  onClick={() => setActiveTab("repositories")}
-                >
-                  📦 Repos ({repositories.length})
-                </Tab>
+                {visibleTabs.map((tab) => (
+                  <Tab
+                    key={tab.key}
+                    type="button"
+                    active={activeTab === tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </Tab>
+                ))}
               </TabsContainer>
 
               {isLoading ? (
@@ -752,6 +802,51 @@ export function ResourcesSelector({
                           {searchQuery
                             ? "Nenhum repositório encontrado"
                             : "Nenhum repositório disponível"}
+                        </NoResults>
+                      )}
+                    </ResourcesList>
+                  )}
+
+                  {activeTab === "softwares" && (
+                    <ResourcesList>
+                      {filteredSoftwares.length > 0 ? (
+                        filteredSoftwares.map((software) => (
+                          <ResourceItem
+                            key={software.id}
+                            selected={selectedIds.has(software.id)}
+                          >
+                            <Checkbox
+                              type="checkbox"
+                              checked={selectedIds.has(software.id)}
+                              onChange={() =>
+                                handleToggleResource(
+                                  software.id,
+                                  "Software",
+                                  software.name,
+                                )
+                              }
+                            />
+                            <ResourceInfo>
+                              <ResourceName>{software.name}</ResourceName>
+                              {software.description && (
+                                <ResourceDescription>
+                                  {software.description}
+                                </ResourceDescription>
+                              )}
+                            </ResourceInfo>
+                            {selectedIds.has(software.id) && (
+                              <FiCheck
+                                size={18}
+                                color="var(--colors-primaryColor)"
+                              />
+                            )}
+                          </ResourceItem>
+                        ))
+                      ) : (
+                        <NoResults>
+                          {searchQuery
+                            ? "Nenhum software encontrado"
+                            : "Nenhum software disponível"}
                         </NoResults>
                       )}
                     </ResourcesList>

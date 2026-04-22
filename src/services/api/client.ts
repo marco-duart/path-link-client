@@ -276,6 +276,31 @@ class ApiClient {
     return response.data;
   }
 
+  // ==================== SOFTWARES ====================
+  async getSoftwares() {
+    const response = await this.client.get('/softwares');
+    return response.data;
+  }
+
+  async getSoftware(id: string) {
+    const response = await this.client.get(`/softwares/${id}`);
+    return response.data;
+  }
+
+  async createSoftware(data: any) {
+    const response = await this.client.post('/softwares', data);
+    return response.data;
+  }
+
+  async updateSoftware(id: string, data: any) {
+    const response = await this.client.patch(`/softwares/${id}`, data);
+    return response.data;
+  }
+
+  async deleteSoftware(id: string) {
+    await this.client.delete(`/softwares/${id}`);
+  }
+
   async getDatabase(id: string) {
     const response = await this.client.get(`/databases/${id}`);
     return response.data;
@@ -393,6 +418,31 @@ class ApiClient {
 
   async deleteAccount(id: string) {
     await this.client.delete(`/accounts/${id}`);
+  }
+
+  // ==================== MACHINES ====================
+  async getMachines(params?: Record<string, unknown>) {
+    const response = await this.client.get('/logistics/machines', { params });
+    return response.data;
+  }
+
+  async getMachine(id: string) {
+    const response = await this.client.get(`/logistics/machines/${id}`);
+    return response.data;
+  }
+
+  async createMachine(data: any) {
+    const response = await this.client.post('/logistics/machines', data);
+    return response.data;
+  }
+
+  async updateMachine(id: string, data: any) {
+    const response = await this.client.patch(`/logistics/machines/${id}`, data);
+    return response.data;
+  }
+
+  async deleteMachine(id: string) {
+    await this.client.delete(`/logistics/machines/${id}`);
   }
 
   // ==================== GENERIC ====================

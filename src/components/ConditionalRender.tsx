@@ -1,10 +1,11 @@
 import React from "react";
-import { usePermission } from "../hooks/usePermission";
+import { usePermission, type AppFeature } from "../hooks/usePermission";
 
 interface ConditionalRenderProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
   requiredLevel?: number;
+  feature?: AppFeature;
   isAdmin?: boolean;
   isManager?: boolean;
   isAnalyst?: boolean;
@@ -14,6 +15,7 @@ export const ConditionalRender: React.FC<ConditionalRenderProps> = ({
   children,
   fallback = null,
   requiredLevel,
+  feature,
   isAdmin,
   isManager,
   isAnalyst,
@@ -24,6 +26,10 @@ export const ConditionalRender: React.FC<ConditionalRenderProps> = ({
 
   if (requiredLevel !== undefined) {
     canRender = canRender && permission.canAccess(requiredLevel);
+  }
+
+  if (feature !== undefined) {
+    canRender = canRender && permission.canAccessFeature(feature);
   }
 
   if (isAdmin !== undefined) {

@@ -10,6 +10,7 @@ import type { Process, Step } from "@/types";
 import { resolveUploadUrl } from "@/utils/assetUrl";
 import {
   FiArrowLeft,
+  FiCode,
   FiEdit2,
   FiTrash2,
   FiChevronDown,
@@ -941,6 +942,8 @@ export function ProcessDetailPage() {
                                             "ConfigurationItem" && (
                                             <FiSettings size={12} />
                                           )}
+                                          {relationship.relatedModel ===
+                                            "Software" && <FiCode size={12} />}
                                           {relationship.relatedObject?.name ||
                                             relationship.relatedModel}
                                         </RelatedResourceTag>
@@ -1011,6 +1014,8 @@ export function ProcessDetailPage() {
                                             "ConfigurationItem" && (
                                             <FiSettings size={12} />
                                           )}
+                                          {relationship.relatedModel ===
+                                            "Software" && <FiCode size={12} />}
                                           {relationship.relatedObject?.name ||
                                             relationship.relatedModel}
                                         </RelatedResourceTag>

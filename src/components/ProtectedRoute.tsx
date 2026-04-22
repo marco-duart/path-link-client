@@ -1,12 +1,13 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useRenderAccess } from "../hooks/usePermission";
+import { useRenderAccess, type AppFeature } from "../hooks/usePermission";
 import { styled } from "../assets/styles/themes/stitches.config";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredLevel?: number;
+  feature?: AppFeature;
   fallback?: React.ReactNode;
 }
 
@@ -57,10 +58,11 @@ const AccessDeniedButton = styled("a", {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredLevel,
+  feature,
   fallback,
 }) => {
   const { isAuthenticated, isLoading } = useAuth();
-  const { shouldRender, reason } = useRenderAccess(requiredLevel);
+  const { shouldRender, reason } = useRenderAccess(requiredLevel, feature);
 
   if (isLoading) {
     return (
@@ -74,7 +76,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (!shouldRender && requiredLevel !== undefined) {
+  if (!shouldRender && (requiredLevel !== undefined || feature !== undefined)) {
     if (fallback) {
       return <>{fallback}</>;
     }

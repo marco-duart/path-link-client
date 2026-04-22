@@ -2,16 +2,18 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { styled } from "../../assets/styles/themes/stitches.config";
 import { useAuth } from "../../contexts/AuthContext";
-import { usePermission } from "../../hooks/usePermission";
+import { usePermission, type AppFeature } from "../../hooks/usePermission";
 import { ConditionalRender } from "../ConditionalRender";
 import {
   FiHome,
   FiActivity,
   FiBook,
+  FiCode,
   FiDatabase,
   FiSettings,
   FiUsers,
   FiGitBranch,
+  FiMonitor,
   FiPackage,
   FiLink2,
   FiKey,
@@ -137,6 +139,7 @@ interface SidebarLink {
   path: string;
   icon: React.ReactNode;
   minLevel?: number;
+  feature?: AppFeature;
 }
 
 interface SidebarProps {
@@ -151,7 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
-  const { getUserLevel } = usePermission();
+  const { getUserLevel, canAccessFeature } = usePermission();
 
   if (!isAuthenticated) {
     return null;
@@ -169,11 +172,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: "Health Check",
       path: "/health-check",
       icon: <FiActivity size={18} />,
+      feature: "healthCheck",
     },
     {
       label: "Processos",
       path: "/processes",
       icon: <FiBook size={18} />,
+      feature: "processes",
     },
   ];
 
@@ -182,36 +187,58 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: "Bancos de Dados",
       path: "/databases",
       icon: <FiDatabase size={18} />,
+      feature: "databases",
+    },
+    {
+      label: "Softwares",
+      path: "/softwares",
+      icon: <FiCode size={18} />,
+      feature: "softwares",
     },
     {
       label: "Repositórios",
       path: "/repositories",
       icon: <FiGitBranch size={18} />,
+      feature: "repositories",
     },
     {
       label: "Deploys",
       path: "/deploys",
       icon: <FiCloud size={18} />,
+      feature: "deploys",
     },
     {
       label: "Links",
       path: "/links",
       icon: <FiLink2 size={18} />,
+      feature: "links",
     },
     {
       label: "Presets",
       path: "/configuration-items",
       icon: <FiPackage size={18} />,
+      feature: "configurationItems",
     },
     {
       label: "Variáveis de Ambiente",
       path: "/environment-variables",
       icon: <FiKey size={18} />,
+      feature: "environmentVariables",
     },
     {
       label: "Contas",
       path: "/accounts",
       icon: <FiLock size={18} />,
+      feature: "accounts",
+    },
+  ];
+
+  const logisticsLinks: SidebarLink[] = [
+    {
+      label: "Máquinas",
+      path: "/logistics/machines",
+      icon: <FiMonitor size={18} />,
+      feature: "machines",
     },
   ];
 
@@ -231,7 +258,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const renderLink = (link: SidebarLink) => {
-    const shouldShowLink = !link.minLevel || userLevel >= link.minLevel;
+    const hasLevelAccess = !link.minLevel || userLevel >= link.minLevel;
+    const hasFeatureAccess = !link.feature || canAccessFeature(link.feature);
+    const shouldShowLink = hasLevelAccess && hasFeatureAccess;
 
     if (!shouldShowLink) {
       return null;
@@ -265,6 +294,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <SidebarTitle>Recursos</SidebarTitle>
       {resourceLinks.map(renderLink)}
+
+      {logisticsLinks.some((link) => !link.feature || canAccessFeature(link.feature)) && (
+        <>
+          <SidebarTitle>Logística</SidebarTitle>
+          {logisticsLinks.map(renderLink)}
+        </>
+      )}
 
       <ConditionalRender requiredLevel={50}>
         <>

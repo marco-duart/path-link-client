@@ -285,6 +285,28 @@ export interface CreateRepositoryDTO {
 
 export interface UpdateRepositoryDTO extends Partial<CreateRepositoryDTO> {}
 
+// Software Types
+export interface Software {
+  id: string;
+  name: string;
+  downloadUrl: string;
+  version?: string;
+  description?: string;
+  requiredLevel: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateSoftwareDTO {
+  name: string;
+  downloadUrl: string;
+  version?: string;
+  description?: string;
+  requiredLevel: number;
+}
+
+export interface UpdateSoftwareDTO extends Partial<CreateSoftwareDTO> {}
+
 // Deploy Types
 export interface Deploy {
   id: string;
@@ -362,6 +384,44 @@ export interface CreateEnvironmentVariableDTO {
 }
 
 export interface UpdateEnvironmentVariableDTO extends Partial<CreateEnvironmentVariableDTO> {}
+
+// Machine Types
+export interface Machine {
+  id: string;
+  assetTag: string;
+  isPda: boolean;
+  deviceType: string;
+  assignee?: string;
+  cpu?: string;
+  ramGb?: number;
+  storageType?: string;
+  storageGb?: number;
+  monitorInfo?: string;
+  room?: string;
+  status: string;
+  notes?: string;
+  requiredLevel: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateMachineDTO {
+  assetTag: string;
+  isPda?: boolean;
+  deviceType?: string;
+  assignee?: string;
+  cpu?: string;
+  ramGb?: number;
+  storageType?: string;
+  storageGb?: number;
+  monitorInfo?: string;
+  room?: string;
+  status?: string;
+  notes?: string;
+  requiredLevel: number;
+}
+
+export interface UpdateMachineDTO extends Partial<CreateMachineDTO> {}
 
 // API Response Types
 export interface PaginatedResponse<T> {

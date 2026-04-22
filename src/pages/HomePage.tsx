@@ -2,10 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@/assets/styles/themes/stitches.config";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission, type AppFeature } from "@/hooks/usePermission";
 import { ConditionalRender } from "@/components/ConditionalRender";
 import { motion } from "framer-motion";
-import { FiBook, FiDatabase, FiGitBranch, FiLink2 } from "react-icons/fi";
+import {
+  FiBook,
+  FiKey,
+  FiLink2,
+  FiMonitor,
+} from "react-icons/fi";
 
 const PageContainer = styled("div", {
   padding: "$xl",
@@ -166,12 +171,13 @@ interface QuickAccessCard {
   icon: React.ReactNode;
   path: string;
   minLevel?: number;
+  feature?: AppFeature;
 }
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const {} = usePermission();
+  const { canAccessFeature } = usePermission();
 
   const quickAccessCards: QuickAccessCard[] = [
     {
@@ -180,20 +186,7 @@ export const HomePage: React.FC = () => {
       description: "Veja e gerencie todos os processos documentados",
       icon: <FiBook size={32} />,
       path: "/processes",
-    },
-    {
-      id: "databases",
-      title: "Bancos de Dados",
-      description: "Acesse informações sobre bancos de dados",
-      icon: <FiDatabase size={32} />,
-      path: "/databases",
-    },
-    {
-      id: "repositories",
-      title: "Repositórios",
-      description: "Gerencie repositórios de código",
-      icon: <FiGitBranch size={32} />,
-      path: "/repositories",
+      feature: "processes",
     },
     {
       id: "links",
@@ -201,8 +194,29 @@ export const HomePage: React.FC = () => {
       description: "Acesso rápido a recursos importantes",
       icon: <FiLink2 size={32} />,
       path: "/links",
+      feature: "links",
+    },
+    {
+      id: "environment-variables",
+      title: "Variáveis de Ambiente",
+      description: "Segredos e configurações exclusivas do time de desenvolvimento",
+      icon: <FiKey size={32} />,
+      path: "/environment-variables",
+      feature: "environmentVariables",
+    },
+    {
+      id: "machines",
+      title: "Máquinas",
+      description: "Controle de estoque, uso e disponibilidade dos equipamentos",
+      icon: <FiMonitor size={32} />,
+      path: "/logistics/machines",
+      feature: "machines",
     },
   ];
+
+  const visibleQuickAccessCards = quickAccessCards.filter(
+    (card) => !card.feature || canAccessFeature(card.feature),
+  );
 
   return (
     <PageContainer>
@@ -233,7 +247,7 @@ export const HomePage: React.FC = () => {
       </Title>
 
       <CardGrid>
-        {quickAccessCards.map((card) => (
+        {visibleQuickAccessCards.map((card) => (
           <ConditionalRender key={card.id} requiredLevel={card.minLevel}>
             <Card
               initial={{ opacity: 0, y: 20 }}

@@ -71,6 +71,10 @@ interface HealthResponsePayload {
     {
       name: "Vicidial",
       url: "http://vdweb.ibccoaching.com.br/vicidial/non_agent_api.php?source=healthcheck&user=ibcsystem&pass=Hxh8zXdW5vK4Q5Y4D9&function=version"
+    },
+    {
+      name: "Vicilog",
+      url: "http://vicilog.ibccoaching.com.br/health",
     }
   ];
 
