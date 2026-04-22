@@ -250,7 +250,11 @@ export const MachineDetailPage: React.FC = () => {
           </InfoItem>
           <InfoItem>
             <InfoLabel>Tipo</InfoLabel>
-            <InfoValue>{machine.isPda ? "PDA" : machine.deviceType || "-"}</InfoValue>
+            <InfoValue>{machine.deviceType || "-"}</InfoValue>
+          </InfoItem>
+          <InfoItem>
+            <InfoLabel>IP</InfoLabel>
+            <InfoValue>{machine.ip || "-"}</InfoValue>
           </InfoItem>
           <InfoItem>
             <InfoLabel>Utilizador</InfoLabel>

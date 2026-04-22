@@ -11,9 +11,9 @@ import apiClient from "@/services/api/client";
 
 const machineSchema = z.object({
   assetTag: z.string().min(1, "Etiqueta é obrigatória"),
-  isPda: z.boolean().default(false),
   deviceType: z.string().min(1, "Tipo é obrigatório"),
   assignee: z.string().optional(),
+  ip: z.string().optional(),
   cpu: z.string().optional(),
   ramGb: z.number().optional(),
   storageType: z.string().optional(),
@@ -103,15 +103,6 @@ const Textarea = styled("textarea", {
   fontFamily: "inherit",
 });
 
-const CheckboxRow = styled("label", {
-  display: "flex",
-  alignItems: "center",
-  gap: "$sm",
-  color: "$textPrimary",
-  fontSize: "$sm",
-  cursor: "pointer",
-});
-
 const ErrorMessage = styled("span", {
   fontSize: "$xs",
   color: "$errorColor",
@@ -174,7 +165,6 @@ export const MachineForm: React.FC<MachineFormProps> = ({ isEditing = false }) =
   } = useForm<MachineFormData>({
     resolver: zodResolver(machineSchema),
     defaultValues: {
-      isPda: false,
       deviceType: "desktop",
       status: "available",
       requiredLevel: RoleLevel.Auxiliar,
@@ -192,9 +182,9 @@ export const MachineForm: React.FC<MachineFormProps> = ({ isEditing = false }) =
       const data = await apiClient.getMachine(machineId);
       reset({
         assetTag: data.assetTag,
-        isPda: data.isPda,
         deviceType: data.deviceType || "desktop",
         assignee: data.assignee || "",
+        ip: data.ip || "",
         cpu: data.cpu || "",
         ramGb: data.ramGb,
         storageType: data.storageType || "",
@@ -277,7 +267,7 @@ export const MachineForm: React.FC<MachineFormProps> = ({ isEditing = false }) =
           <Row>
             <FormGroup>
               <Label>Tipo do Equipamento</Label>
-              <Input type="text" placeholder="desktop, notebook, pda" {...register("deviceType")} />
+              <Input type="text" placeholder="desktop, notebook, servidor" {...register("deviceType")} />
               {errors.deviceType && <ErrorMessage>{errors.deviceType.message}</ErrorMessage>}
             </FormGroup>
             <FormGroup>
@@ -288,13 +278,21 @@ export const MachineForm: React.FC<MachineFormProps> = ({ isEditing = false }) =
 
           <Row>
             <FormGroup>
+              <Label>IP da Máquina</Label>
+              <Input type="text" placeholder="Ex: 192.168.0.10" {...register("ip")} />
+            </FormGroup>
+            <FormGroup>
               <Label>Processador</Label>
               <Input type="text" placeholder="Ex: Intel i5-10400" {...register("cpu")} />
             </FormGroup>
+          </Row>
+
+          <Row>
             <FormGroup>
               <Label>Sala</Label>
               <Input type="text" placeholder="Ex: Sala TI" {...register("room")} />
             </FormGroup>
+            <FormGroup />
           </Row>
 
           <Row>
@@ -326,13 +324,6 @@ export const MachineForm: React.FC<MachineFormProps> = ({ isEditing = false }) =
               <Input type="text" placeholder="Ex: 24 polegadas Dell" {...register("monitorInfo")} />
             </FormGroup>
           </Row>
-
-          <FormGroup>
-            <CheckboxRow>
-              <input type="checkbox" {...register("isPda")} />
-              É um PDA
-            </CheckboxRow>
-          </FormGroup>
 
           <FormGroup>
             <Label>Nível mínimo de acesso</Label>

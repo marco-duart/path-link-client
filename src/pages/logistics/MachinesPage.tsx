@@ -96,6 +96,7 @@ const FilterActions = styled("div", {
 interface MachineFilters {
   search: string;
   status: string;
+  ip: string;
   deviceType: string;
   storageType: string;
   room: string;
@@ -104,6 +105,7 @@ interface MachineFilters {
 const initialFilters: MachineFilters = {
   search: "",
   status: "",
+  ip: "",
   deviceType: "",
   storageType: "",
   room: "",
@@ -180,7 +182,7 @@ export function MachinesPage() {
             <Input
               value={filters.search}
               onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
-              placeholder="Etiqueta, usuário, CPU, sala"
+              placeholder="Etiqueta, IP, usuário, CPU, sala"
             />
           </Field>
           <Field>
@@ -198,11 +200,19 @@ export function MachinesPage() {
             </Select>
           </Field>
           <Field>
+            <Label>IP</Label>
+            <Input
+              value={filters.ip}
+              onChange={(event) => setFilters((prev) => ({ ...prev, ip: event.target.value }))}
+              placeholder="Ex: 192.168.0"
+            />
+          </Field>
+          <Field>
             <Label>Tipo</Label>
             <Input
               value={filters.deviceType}
               onChange={(event) => setFilters((prev) => ({ ...prev, deviceType: event.target.value }))}
-              placeholder="Ex: pda, desktop"
+              placeholder="Ex: desktop, notebook"
             />
           </Field>
           <Field>
@@ -274,7 +284,13 @@ export function MachinesPage() {
               key: "deviceType",
               label: "Tipo",
               width: "120px",
-              render: (value: string, row: Machine) => row.isPda ? "PDA" : value || "-",
+              render: (value: string) => value || "-",
+            },
+            {
+              key: "ip",
+              label: "IP",
+              width: "140px",
+              render: (value: string | undefined) => value || "-",
             },
             {
               key: "assignee",

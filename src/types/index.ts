@@ -389,9 +389,9 @@ export interface UpdateEnvironmentVariableDTO extends Partial<CreateEnvironmentV
 export interface Machine {
   id: string;
   assetTag: string;
-  isPda: boolean;
   deviceType: string;
   assignee?: string;
+  ip?: string;
   cpu?: string;
   ramGb?: number;
   storageType?: string;
@@ -407,9 +407,9 @@ export interface Machine {
 
 export interface CreateMachineDTO {
   assetTag: string;
-  isPda?: boolean;
   deviceType?: string;
   assignee?: string;
+  ip?: string;
   cpu?: string;
   ramGb?: number;
   storageType?: string;
